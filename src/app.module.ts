@@ -12,6 +12,7 @@ import { ProyectoModule } from './proyecto/proyecto.module';
 import { PublicacionModule } from './publicacion/publicacion.module';
 import { ReconocimientoModule } from './reconocimiento/reconocimiento.module';
 import { DepartamentoModule } from './departamento/departamento.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -36,6 +37,7 @@ import { DepartamentoModule } from './departamento/departamento.module';
     PublicacionModule,
     ReconocimientoModule,
     DepartamentoModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

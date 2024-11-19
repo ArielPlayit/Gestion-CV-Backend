@@ -15,6 +15,6 @@ export class Usuario {
         default: 'Profesor'
     })rol: string;
 
-    @OneToOne(() => Profesor, profesor => profesor.usuario)
-    @JoinColumn()profesor: Profesor;
+    @OneToOne(() => Profesor, profesor => profesor.usuario, {cascade: true})
+    profesor: Profesor;
 }

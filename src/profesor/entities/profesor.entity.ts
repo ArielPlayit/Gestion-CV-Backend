@@ -6,7 +6,7 @@ import { Publicacion } from "src/publicacion/entities/publicacion.entity";
 import { Reconocimiento } from "src/reconocimiento/entities/reconocimiento.entity";
 import { Tesis } from "src/tesis/entities/tesis.entity";
 import { Usuario } from "src/usuario/entities/usuario.entity";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn} from "typeorm";
 
 export enum CategoriaDocente {
     Sin_Categoria = 'Sin Categoría',
@@ -37,52 +37,50 @@ export enum CategoriaCientifica{
 
 @Entity()
 export class Profesor {
-    @PrimaryGeneratedColumn()id: number;
+    @PrimaryColumn()id: number;
     
-    @Column('text',{unique: true})email: string;
-    
-    @Column()contrasena:string;
+    @Column('text',{unique: true, nullable: true})email: string;
 
-    @Column('text')nombre: string;
+    @Column('text',{ nullable: true})nombre: string;
 
-    @Column()primer_apellido: string;
+    @Column({ nullable: true})primer_apellido: string;
 
-    @Column()segundo_apellido: string;
+    @Column({ nullable: true})segundo_apellido: string;
  
-    @Column()fecha_nac: Date;
+    @Column({ nullable: true})fecha_nac: Date;
 
-    @Column('numeric')telefono: string;
+    @Column('numeric',{ nullable: true})telefono: string;
 
-    @Column()graduado_de: string;
+    @Column({ nullable: true})graduado_de: string;
 
     @Column({
         type: 'enum',
         enum: GradoCientifico,
         default: GradoCientifico.Sin_Grado
-    }) grado_cientifico: string;
-    @Column('date')fecha_de_grado_cientifico: Date;
-    @Column()lugar_de_grado_cientifico: string;
+    },) grado_cientifico: string;
+    @Column('date',{ nullable: true})fecha_de_grado_cientifico: Date;
+    @Column({ nullable: true})lugar_de_grado_cientifico: string;
     
     @Column({
         type: 'enum',
         enum: CategoriaDocente,
         default: CategoriaDocente.Sin_Categoria
     })  categoria_docente: string;
-    @Column('date')fecha_de_categoria_docente: Date;
-    @Column()lugar_de_categoria_docente: string;
+    @Column('date',{ nullable: true})fecha_de_categoria_docente: Date;
+    @Column({ nullable: true})lugar_de_categoria_docente: string;
     
     @Column({
         type: 'enum',
         enum: CategoriaCientifica,
         default: CategoriaCientifica.Sin_Categoria
     })  categoria_cientifica: string;
-    @Column('date')fecha_de_categoria_cientifica: Date;
-    @Column()lugar_de_categoria_cientifica: string;
+    @Column('date',{ nullable: true})fecha_de_categoria_cientifica: Date;
+    @Column({ nullable: true})lugar_de_categoria_cientifica: string;
     
-    @Column('text')posicion_actual: string;
+    @Column('text',{ nullable: true})posicion_actual: string;
 
-    @OneToOne(() => Usuario, usuario => usuario.profesor, {cascade: true})
-    usuario: Usuario;
+    @OneToOne(() => Usuario, usuario => usuario.profesor)
+    @JoinColumn() usuario: Usuario;
     @OneToMany(() => Idioma, idioma => idioma.profesor, {cascade: true})
     idioma: Idioma;
     @OneToMany(() => Curso, curso => curso.profesor, {cascade: true})

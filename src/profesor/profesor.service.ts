@@ -35,8 +35,12 @@ export class ProfesorService {
     return profesor;
   }
 
-  update(id: number, updateProfesorDto: UpdateProfesorDto) {
-    return `This action updates a #${id} profesor`;
+  async updateByUsuarioId(usuarioId: number, updateProfesorDto: UpdateProfesorDto): Promise<Profesor>{
+    const profesor = await this.profesorRepository.findOne({
+      where: { usuario: { id: usuarioId}}
+    })
+    Object.assign(profesor, updateProfesorDto)
+    return await this.profesorRepository.save(profesor)
   }
 
   remove(id: number) {

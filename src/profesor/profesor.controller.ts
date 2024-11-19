@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ProfesorService } from './profesor.service';
 import { CreateProfesorDto } from './dto/create-profesor.dto';
 import { UpdateProfesorDto } from './dto/update-profesor.dto';
 import { Profesor } from './entities/profesor.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('profesor')
+@UseGuards(JwtAuthGuard)
 export class ProfesorController {
   constructor(private readonly profesorService: ProfesorService) {}
 
@@ -23,10 +25,15 @@ export class ProfesorController {
     return this.profesorService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfesorDto: UpdateProfesorDto) {
-    return this.profesorService.update(+id, updateProfesorDto);
+  @Patch()
+  async update(
+    @Req() req: any,
+    @Body() updateProfesorDto: UpdateProfesorDto,
+  ){
+    const usuarioId = req.user.userId;
+    return this.profesorService.updateByUsuarioId(usuarioId, updateProfesorDto)
   }
+  
 
   @Delete(':id')
   remove(@Param('id') id: string) {

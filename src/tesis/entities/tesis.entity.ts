@@ -13,5 +13,5 @@ export class Tesis {
     @Column()anodefensa: Date;
 
     @ManyToOne(() => Profesor, profesor => profesor.tesis)
-    @JoinColumn()profesor: Profesor[];
+    @JoinColumn()profesor: Profesor;
 }
