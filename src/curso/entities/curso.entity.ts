@@ -16,6 +16,6 @@ export class Curso {
     @Column()fechafin: Date
 
     @ManyToOne(() => Profesor, profesor => profesor.curso)
-    @JoinTable() profesor: Profesor[]
+    @JoinTable() profesor: Profesor
 
 }

@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { IdiomaService } from './idioma.service';
 import { CreateIdiomaDto } from './dto/create-idioma.dto';
 import { UpdateIdiomaDto } from './dto/update-idioma.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('idioma')
+@UseGuards(JwtAuthGuard)
 export class IdiomaController {
   constructor(private readonly idiomaService: IdiomaService) {}
 
   @Post()
-  create(@Body() createIdiomaDto: CreateIdiomaDto) {
-    return this.idiomaService.create(createIdiomaDto);
+  async create(@Body() createIdiomaDto: CreateIdiomaDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.idiomaService.create(createIdiomaDto, profesorId);
   }
 
   @Get()

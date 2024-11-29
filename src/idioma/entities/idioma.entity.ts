@@ -17,7 +17,7 @@ export class Idioma {
     @Column()habla: boolean;
 
     @ManyToOne(() => Profesor, profesor => profesor.idioma)
-    @JoinColumn()profesor: Profesor[];
+    @JoinColumn()profesor: Profesor;
 
 
 

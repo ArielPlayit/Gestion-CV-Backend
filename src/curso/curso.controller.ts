@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { CursoService } from './curso.service';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('curso')
+@UseGuards(JwtAuthGuard)
 export class CursoController {
   constructor(private readonly cursoService: CursoService) {}
 
   @Post()
-  create(@Body() createCursoDto: CreateCursoDto) {
-    return this.cursoService.create(createCursoDto);
+  async create(@Body() createCursoDto: CreateCursoDto, @Req()req: any) {
+    const profesorId =  req.user.profesorId;
+    return await this.cursoService.create(createCursoDto, profesorId);
   }
 
   @Get()
