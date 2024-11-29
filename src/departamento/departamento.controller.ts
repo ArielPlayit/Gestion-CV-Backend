@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { DepartamentoService } from './departamento.service';
 import { CreateDepartamentoDto } from './dto/create-departamento.dto';
 import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('departamento')
+@UseGuards(JwtAuthGuard)
 export class DepartamentoController {
   constructor(private readonly departamentoService: DepartamentoService) {}
 
   @Post()
-  create(@Body() createDepartamentoDto: CreateDepartamentoDto) {
-    return this.departamentoService.create(createDepartamentoDto);
+   async create(@Body() createDepartamentoDto: CreateDepartamentoDto, @Req() req: any) {
+    const profesorId =  req.user.profesorId;
+    return await this.departamentoService.create(createDepartamentoDto, profesorId);
   }
 
   @Get()

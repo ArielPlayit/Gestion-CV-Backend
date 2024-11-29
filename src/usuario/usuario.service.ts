@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,33 +19,35 @@ export class UsuarioService {
     const newUser = this.usuarioRepository.create(usuarioData);
     const savedUser = await this.usuarioRepository.save(newUser);
 
-    //Crear y guardar el profesor asociado con el mismo ID
     const profesor = new Profesor();
-    profesor.id = savedUser.id; //Heredamos el id del usuario
+    profesor.id = savedUser.id;
     profesor.usuario = savedUser;
     await this.profesorRepository.save(profesor);
 
     return savedUser;
   }
 
-  async findByUsername(username: string): Promise<Usuario|undefined> {
-    return await this.usuarioRepository.findOne({where: {username}});
+  async findByUsername(username: string): Promise<Usuario | undefined> {
+    return await this.usuarioRepository.findOne({ where: { username }, relations: ['profesor'] });
   }
-  
+
   findAll() {
-    return `This action returns all usuario`;
+    return this.usuarioRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuario`;
+  async findOne(id: number): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.findOne({ where: { id }, relations: ['profesor'] });
+    if (!usuario) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+    return usuario;
   }
 
-
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  updateRol(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuarioRepository.update(id, updateUsuarioDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} usuario`;
+    return this.usuarioRepository.delete(id);
   }
 }

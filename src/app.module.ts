@@ -13,11 +13,13 @@ import { PublicacionModule } from './publicacion/publicacion.module';
 import { ReconocimientoModule } from './reconocimiento/reconocimiento.module';
 import { DepartamentoModule } from './departamento/departamento.module';
 import { AuthModule } from './auth/auth.module';
+import { Usuario } from './usuario/entities/usuario.entity';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    TypeOrmModule.forFeature([Usuario]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,

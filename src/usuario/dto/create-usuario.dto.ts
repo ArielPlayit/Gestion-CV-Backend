@@ -11,6 +11,6 @@ export class CreateUsuarioDto {
 
 
   @IsNotEmpty()
-  @IsEnum(['ADMIN', 'Profesor', 'Jefe_Departamento'])
+  @IsEnum(['ADMIN', 'Profesor','Jefe de Departamento'])
   rol: string;
 }

@@ -1,3 +1,4 @@
+import { IsBoolean } from "class-validator";
 import { Profesor } from "src/profesor/entities/profesor.entity";
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -8,7 +9,8 @@ export class Departamento {
         type: 'enum',
         enum: ['Fisica','Informatica','Ciberseguridad']
     })nombre: string;
+    
     @OneToMany(() => Profesor, profesor => profesor.departamento)
-    @JoinColumn()profesores: Profesor[]
+    @JoinColumn()profesor: Profesor
 
 }

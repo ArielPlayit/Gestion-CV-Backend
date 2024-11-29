@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { TesisService } from './tesis.service';
 import { CreateTesisDto } from './dto/create-tesi.dto';
 import { UpdateTesiDto } from './dto/update-tesi.dto';
@@ -10,10 +10,12 @@ export class TesisController {
   constructor(private readonly tesisService: TesisService) {}
 
   @Post()
-   async create(@Body() createTesisDto: CreateTesisDto, @Req() req: any) {
+  async create(@Body() createTesisDto: CreateTesisDto, @Req() req: any) {
     const profesorId = req.user.profesorId; // Obtenemos el profesorId del token
+    const rol = req.user.rol // Obtenemos el rol del token
     return await this.tesisService.create(createTesisDto, profesorId);
   }
+
   @Get('profesor/nombre/:nombre')
   findOne(@Param('nombre') nombre: string) {
     return this.tesisService.findByProfesorName(nombre);
