@@ -33,6 +33,7 @@ export class UsuarioController {
   }
 
   @Delete(':id')
+  @Roles('ADMIN')
   remove(@Param('id') id: string) {
     return this.usuarioService.remove(+id);
   }
