@@ -23,6 +23,7 @@ export class AuthService {
     const usuario = await this.usuarioService.create({
       ...registerDto,
       password: hashedPassword,
+      confirmPassword: hashedPassword,
       rol: rol || 'Profesor'
     });
 

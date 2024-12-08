@@ -25,6 +25,7 @@ async onApplicationBootstrap() {
     await this.usuarioService.create({
       username: 'admin',
       password: hashedPassword,
+      confirmPassword: hashedPassword,
       rol: 'ADMIN',
     });
     console.log('Usuario ADMIN creado con éxito');

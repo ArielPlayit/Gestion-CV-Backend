@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,7 +17,15 @@ export class UsuarioService {
   ){}
 
   async create(usuarioData: CreateUsuarioDto): Promise<Usuario> {
-    const newUser = this.usuarioRepository.create(usuarioData);
+    if (usuarioData.password !== usuarioData.confirmPassword) {
+      throw new BadRequestException('Las contraseñas no coinciden');
+    }
+
+    const hashedPassword = await bcrypt.hash(usuarioData.password, 10);
+    const newUser = this.usuarioRepository.create({
+      ...usuarioData,
+      password: hashedPassword,
+    });
     const savedUser = await this.usuarioRepository.save(newUser);
 
     const profesor = new Profesor();
