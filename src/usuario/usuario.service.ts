@@ -54,9 +54,9 @@ export class UsuarioService {
   async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario> {
     if (updateUsuarioDto.password){
       updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, 10);
+    }
       await this.usuarioRepository.update(id, updateUsuarioDto);
       return this.findOne(id);
-    }
   }
 
   async updateRol(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario>{
