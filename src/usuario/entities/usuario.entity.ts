@@ -1,20 +1,25 @@
+import { Solicitud } from "src/solicitud/entities/solicitud.entity";
 import { Profesor } from "src/profesor/entities/profesor.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Usuario {
-    @PrimaryGeneratedColumn()id:number;
+    @PrimaryGeneratedColumn() id: number;
 
-    @Column()username: string;
+    @Column() username: string;
 
-    @Column()password: string;
+    @Column() password: string;
 
     @Column({
         type: 'enum',
         enum: ['ADMIN', 'Profesor', 'Jefe_Departamento'],
         default: 'Profesor'
-    })rol: string;
+    }) rol: string;
 
-    @OneToOne(() => Profesor, profesor => profesor.usuario, {cascade: true})
+    @OneToOne(() => Profesor, profesor => profesor.usuario, { cascade: true })
     profesor: Profesor;
+
+    @OneToMany(() => Solicitud, solicitud => solicitud.usuario)
+    solicitudes: Solicitud[];
 }
+

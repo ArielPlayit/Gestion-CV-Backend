@@ -14,6 +14,7 @@ import { ReconocimientoModule } from './reconocimiento/reconocimiento.module';
 import { DepartamentoModule } from './departamento/departamento.module';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
+import { SolicitudModule } from './solicitud/solicitud.module';
 
 
 @Module({
@@ -40,6 +41,7 @@ import { Usuario } from './usuario/entities/usuario.entity';
     ReconocimientoModule,
     DepartamentoModule,
     AuthModule,
+    SolicitudModule,
   ],
 })
 export class AppModule {}
