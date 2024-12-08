@@ -47,7 +47,7 @@ export class UsuarioService {
     return this.usuarioRepository.update(id, updateUsuarioDto);
   }
 
-  remove(id: number) {
-    return this.usuarioRepository.delete(id);
+  async remove(id: number): Promise<void> {
+    await this.usuarioRepository.delete(id);
   }
 }
