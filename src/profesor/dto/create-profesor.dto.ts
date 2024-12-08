@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsOptional, IsPositive, IsString, Length, Matches, MinLength } from "class-validator";
-
+import { IsDate, IsEmail, IsEnum, IsOptional, IsPositive, IsString, Length, Matches, MinLength } from "class-validator";
+import { CategoriaCientifica, CategoriaDocente, GradoCientifico } from "../entities/profesor.entity";
 
 export class CreateProfesorDto {
     @IsOptional()
@@ -34,6 +34,34 @@ export class CreateProfesorDto {
     @IsString()
     posicion_actual: string
 
+    @IsOptional()
+    @IsEnum(GradoCientifico)
+    grado_cientifico: string;
 
+    @IsOptional()
+    @Type(()=> Date)
+    @IsDate()
+    fecha_de_grado_cientifico: Date;
+
+    @IsOptional()
+    @IsString()
+    lugar_de_grado_cientifico: string;
+
+    @IsOptional()
+    @IsEnum(CategoriaDocente)
+    categoria_docente: string;
+
+    @IsOptional()
+    @Type(()=> Date)
+    @IsDate()
+    fecha_de_categoria_docente: Date;
+
+    @IsOptional()
+    @IsString()
+    lugar_de_categoria_docente: string;
+
+    @IsOptional()
+    @IsEnum(CategoriaCientifica)
+    categoria_cientifica: string;
 
 }
