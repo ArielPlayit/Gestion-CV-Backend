@@ -26,10 +26,22 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
+  @Patch(':id')
+  @Roles('ADMIN')
+  async update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuarioService.update(id, updateUsuarioDto);
+  }
+
   @Patch(':id/rol')
   @Roles('ADMIN')
   async updateRol(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
     return this.usuarioService.updateRol(id, updateUsuarioDto);
+  }
+
+  @Patch(':id/username')
+  @Roles('ADMIN')
+  async updateUsername(@Param('id') id: number, @Body('username') newUsername: string) {
+    return this.usuarioService.updateUsername(id, newUsername);
   }
 
   @Delete(':id')

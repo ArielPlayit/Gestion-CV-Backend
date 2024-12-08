@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
 import { Profesor } from 'src/profesor/entities/profesor.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
@@ -43,8 +44,24 @@ export class UsuarioService {
     return usuario;
   }
 
-  updateRol(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioRepository.update(id, updateUsuarioDto);
+  async updateUsername(id: number, newUsername: string): Promise<Usuario> {
+    const usuario = await this.findOne(id);
+    usuario.username = newUsername;
+    await this.usuarioRepository.save(usuario);
+    return usuario;
+  }
+
+  async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario> {
+    if (updateUsuarioDto.password){
+      updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, 10);
+      await this.usuarioRepository.update(id, updateUsuarioDto);
+      return this.findOne(id);
+    }
+  }
+
+  async updateRol(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario>{
+    await this.usuarioRepository.update(id, updateUsuarioDto);
+    return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
