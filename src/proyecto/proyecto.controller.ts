@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { ProyectoService } from './proyecto.service';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
@@ -10,9 +10,9 @@ export class ProyectoController {
   constructor(private readonly proyectoService: ProyectoService) {}
 
   @Post()
-  create(@Body() createProyectoDto: CreateProyectoDto, @Request() req: any) {
-    createProyectoDto['profesorId'] = req.user.profesorId;
-    return this.proyectoService.create(createProyectoDto)
+  create(@Body() createProyectoDto: CreateProyectoDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.proyectoService.create(createProyectoDto, profesorId)
   }
 
   @Get('profesor/nombre/:nombre')
