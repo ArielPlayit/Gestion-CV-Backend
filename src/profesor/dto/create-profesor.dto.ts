@@ -32,6 +32,19 @@ export class CreateProfesorDto {
 
     @IsOptional()
     @IsString()
+    graduado_de: string;
+
+    @IsOptional()
+    @Type(()=> Date)
+    @IsDate()
+    graduado_fecha: Date;
+
+    @IsOptional()
+    @IsString()
+    graduado_lugar: string;
+
+    @IsOptional()
+    @IsString()
     posicion_actual: string
 
     @IsOptional()

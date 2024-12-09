@@ -53,6 +53,10 @@ export class Profesor {
 
     @Column({ nullable: true})graduado_de: string;
 
+    @Column({ nullable: true})graduado_fecha: Date;
+
+    @Column({ nullable: true})graduado_lugar: string;
+
     @Column({
         type: 'enum',
         enum: GradoCientifico,
