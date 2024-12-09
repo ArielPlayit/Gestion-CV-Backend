@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UpdateRolDto } from './dto/update-rol.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
@@ -67,8 +68,8 @@ export class UsuarioService {
       return this.findOne(id);
   }
 
-  async updateRol(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario>{
-    await this.usuarioRepository.update(id, updateUsuarioDto);
+  async updateRol(id: number, updateRolDto: UpdateRolDto): Promise<Usuario>{
+    await this.usuarioRepository.update(id, updateRolDto);
     return this.findOne(id);
   }
 

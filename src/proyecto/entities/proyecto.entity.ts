@@ -18,7 +18,7 @@ export class Proyecto {
     @Column()fechaFin: Date;
 
     @ManyToOne(() => Profesor, profesor => profesor.proyecto)
-    @JoinColumn() profesor: Profesor[];
+    @JoinColumn() profesor: Profesor;
 
 
 

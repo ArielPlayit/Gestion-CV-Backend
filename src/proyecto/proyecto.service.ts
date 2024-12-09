@@ -4,15 +4,24 @@ import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Proyecto } from './entities/proyecto.entity';
 import { Repository } from 'typeorm';
+import { Profesor } from 'src/profesor/entities/profesor.entity';
 
 @Injectable()
 export class ProyectoService {
   constructor(
     @InjectRepository(Proyecto)
-    private proyectoRepository: Repository<Proyecto>
+    private proyectoRepository: Repository<Proyecto>,
+    @InjectRepository(Profesor)
+    private profesorRepository: Repository<Profesor>
   ) {}
-  async create(createProyectoDto: CreateProyectoDto) {
-    const proyecto = this.proyectoRepository.create(createProyectoDto)
+
+  async create(createProyectoDto: CreateProyectoDto, profesorId: number): Promise<Proyecto> {
+    const profesor = await this.profesorRepository.findOne({where: { id: profesorId}});
+    const proyecto = this.proyectoRepository.create({
+      ...createProyectoDto,
+      profesor,
+    });
+
     return await this.proyectoRepository.save(proyecto);
   }
 

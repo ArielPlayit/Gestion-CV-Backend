@@ -9,5 +9,5 @@ export class Reconocimiento {
     @Column()fecha: Date;
      
     @ManyToOne(() => Profesor, profesor => profesor.reconocimiento)
-    @JoinColumn()profesor: Profesor[];
+    @JoinColumn()profesor: Profesor;
 }

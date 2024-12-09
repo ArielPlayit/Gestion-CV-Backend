@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { UpdateRolDto } from './dto/update-rol.dto'; // Importar UpdateRolDto
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
@@ -34,8 +35,8 @@ export class UsuarioController {
 
   @Patch(':id/rol')
   @Roles('ADMIN')
-  async updateRol(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.updateRol(id, updateUsuarioDto);
+  async updateRol(@Param('id') id: number, @Body() updateRolDto: UpdateRolDto) { // Usar UpdateRolDto
+    return this.usuarioService.updateRol(id, updateRolDto);
   }
 
   @Patch(':id/username')
