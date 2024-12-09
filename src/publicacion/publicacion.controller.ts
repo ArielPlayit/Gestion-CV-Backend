@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { PublicacionService } from './publicacion.service';
 import { CreatePublicacionDto } from './dto/create-publicacion.dto';
 import { UpdatePublicacionDto } from './dto/update-publicacion.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('publicacion')
+@UseGuards(JwtAuthGuard)
 export class PublicacionController {
   constructor(private readonly publicacionService: PublicacionService) {}
 
   @Post()
-  create(@Body() createPublicacionDto: CreatePublicacionDto) {
-    return this.publicacionService.create(createPublicacionDto);
+  create(@Body() createPublicacionDto: CreatePublicacionDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.publicacionService.create(createPublicacionDto, profesorId);
   }
 
   @Get()

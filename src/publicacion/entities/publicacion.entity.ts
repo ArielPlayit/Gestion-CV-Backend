@@ -18,5 +18,5 @@ export class Publicacion {
     @Column()lugar: string;
     @Column()fecha: Date;
     @ManyToOne(() => Profesor, profesor => profesor.publicacion)
-    @JoinColumn()profesor: Profesor[];
+    @JoinColumn()profesor: Profesor;
 }
