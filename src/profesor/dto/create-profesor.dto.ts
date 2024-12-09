@@ -77,4 +77,13 @@ export class CreateProfesorDto {
     @IsEnum(CategoriaCientifica)
     categoria_cientifica: string;
 
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate()
+    fecha_de_categoria_cientifica: Date;
+
+    @IsOptional()
+    @IsString()
+    lugar_de_categoria_cientifica: string;
+
 }
