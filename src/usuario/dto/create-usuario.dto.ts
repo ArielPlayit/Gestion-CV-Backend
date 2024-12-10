@@ -12,7 +12,7 @@ export class CreateUsuarioDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, { message: 'Las contraseñas no coinciden' })
-  confirmPassword: string;
+  confirmPassword?: string;
 
   @IsNotEmpty()
   @IsEnum(['ADMIN', 'Profesor', 'Jefe_Departamento'])
