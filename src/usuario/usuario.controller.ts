@@ -27,6 +27,12 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
+  @Get('buscar/:name')
+  @Roles('ADMIN')
+  findByName(@Param('name') name: string) {
+    return this.usuarioService.findByUsername(name);
+  }
+
   @Patch(':id')
   @Roles('ADMIN')
   async update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
