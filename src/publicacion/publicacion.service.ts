@@ -25,16 +25,18 @@ export class PublicacionService {
     return await this.publicacionRepository.save(publicacion);
   }
 
-  findAll() {
-    return `This action returns all publicacion`;
+  findAll(): Promise<Publicacion[]> {
+    return this.publicacionRepository.find({ relations: ['profesor']});
   }
 
   findOne(id: number) {
     return `This action returns a #${id} idioma`;
   }
 
-  update(id: number, updatePublicacionDto: UpdatePublicacionDto) {
-    return `This action updates a #${id} publicacion`;
+  async update(id: number, updatePublicacionDto: UpdatePublicacionDto): Promise<Publicacion> {
+    const publicacion =  await this.publicacionRepository.findOne({ where: {id}});
+    Object.assign(publicacion, updatePublicacionDto);
+    return await this.publicacionRepository.save(publicacion);
   }
 
   remove(id: number) {

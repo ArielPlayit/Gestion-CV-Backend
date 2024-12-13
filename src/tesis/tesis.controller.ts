@@ -16,6 +16,11 @@ export class TesisController {
     return await this.tesisService.create(createTesisDto, profesorId);
   }
 
+  @Get()
+  findAll() {
+    return this.tesisService.findAll();
+  }
+
   @Get('profesor/nombre/:nombre')
   findOne(@Param('nombre') nombre: string) {
     return this.tesisService.findByProfesorName(nombre);

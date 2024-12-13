@@ -26,16 +26,18 @@ export class IdiomaService {
     return await this.idiomaRepository.save(idioma);
   }
 
-  findAll() {
-    return `This action returns all idioma`;
+  findAll(): Promise<Idioma[]> {
+    return this.idiomaRepository.find({ relations: ['profesor']});
   }
 
   findOne(id: number) {
     return `This action returns a #${id} idioma`;
   }
 
-  update(id: number, updateIdiomaDto: UpdateIdiomaDto) {
-    return `This action updates a #${id} idioma`;
+  async update(id: number, updateIdiomaDto: UpdateIdiomaDto): Promise<Idioma> {
+    const idioma = await this.idiomaRepository.findOne({ where: {id}});
+    Object.assign(idioma, updateIdiomaDto);
+    return await this.idiomaRepository.save(idioma);
   }
 
   remove(id: number) {

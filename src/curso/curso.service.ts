@@ -29,16 +29,18 @@ export class CursoService {
     return await this.cursoRepository.save(curso);
   }
 
-  findAll() {
-    return `This action returns all curso`;
+  findAll(): Promise<Curso[]> {
+    return this.cursoRepository.find({ relations: ['profesor']});
   }
 
   findOne(id: number) {
     return `This action returns a #${id} curso`;
   }
 
-  update(id: number, updateCursoDto: UpdateCursoDto) {
-    return `This action updates a #${id} curso`;
+  async update(id: number, updateCursoDto: UpdateCursoDto): Promise<Curso> {
+    const curso = await this.cursoRepository.findOne({ where: {id}});
+    Object.assign(curso, updateCursoDto);
+    return await this.cursoRepository.save(curso);
   }
 
   remove(id: number) {

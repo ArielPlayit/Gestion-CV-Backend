@@ -15,6 +15,11 @@ export class ProyectoController {
     return this.proyectoService.create(createProyectoDto, profesorId)
   }
 
+  @Get()
+  findAll() {
+    return this.proyectoService.findAll();
+  }
+
   @Get('profesor/nombre/:nombre')
   findOne(@Param('nombre') nombre: string) {
     return this.proyectoService.findByProfesorName(nombre);

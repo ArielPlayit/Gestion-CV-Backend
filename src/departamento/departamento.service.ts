@@ -35,8 +35,10 @@ export class DepartamentoService {
     return `This action returns a #${id} departamento`;
   }
 
-  update(id: number, updateDepartamentoDto: UpdateDepartamentoDto) {
-    return `This action updates a #${id} departamento`;
+  async update(id: number, updateDepartamentoDto: UpdateDepartamentoDto): Promise<Departamento> {
+    const departamento = await this.departamentoRepository.findOne({ where: {id}});
+    Object.assign(departamento, updateDepartamentoDto);
+    return await this.departamentoRepository.save(departamento);
   }
 
   remove(id: number) {

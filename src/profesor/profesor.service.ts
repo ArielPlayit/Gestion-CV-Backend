@@ -24,8 +24,8 @@ export class ProfesorService {
     }
   }
 
-  async findAll() {
-    return this.profesorRepository.find({});
+  findAll(): Promise<Profesor[]> {
+    return this.profesorRepository.find({relations: ['profesor']});
   }
 
   async findOne(id: number) {
