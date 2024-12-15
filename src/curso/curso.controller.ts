@@ -15,14 +15,10 @@ export class CursoController {
     return await this.cursoService.create(createCursoDto, profesorId);
   }
 
-  @Get()
-  findAll() {
-    return this.cursoService.findAll();
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cursoService.findOne(+id);
+  async findOne(@Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.cursoService.findOne(profesorId);
   }
 
   @Patch(':id')

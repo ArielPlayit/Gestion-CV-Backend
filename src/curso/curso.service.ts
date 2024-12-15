@@ -29,12 +29,8 @@ export class CursoService {
     return await this.cursoRepository.save(curso);
   }
 
-  findAll(): Promise<Curso[]> {
-    return this.cursoRepository.find({ relations: ['profesor']});
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} curso`;
+  async findOne(profesorId: number): Promise<Curso[]> {
+    return await this.cursoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
   async update(id: number, updateCursoDto: UpdateCursoDto): Promise<Curso> {
