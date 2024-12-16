@@ -16,18 +16,15 @@ export class DepartamentoController {
   }
 
   @Get()
-  findAll() {
-    return this.departamentoService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.departamentoService.findOne(+id);
+  async findOne(@Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.departamentoService.findOne(profesorId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDepartamentoDto: UpdateDepartamentoDto) {
-    return this.departamentoService.update(+id, updateDepartamentoDto);
+  async update(@Body() updateDepartamentoDto: UpdateDepartamentoDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.departamentoService.update(profesorId, updateDepartamentoDto);
   }
 
   @Delete(':id')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartamentoDto } from './dto/create-departamento.dto';
 import { UpdateDepartamentoDto } from './dto/update-departamento.dto';
 import { Departamento } from './entities/departamento.entity';
@@ -14,29 +14,34 @@ export class DepartamentoService {
     @InjectRepository(Profesor)
     private profesorRepository: Repository<Profesor>
   ){}
+
   async create(createDepartamentoDto: CreateDepartamentoDto, profesorId: number): Promise<Departamento> {
-    const profesor = await this.profesorRepository.findOne({where: { id: profesorId}});
+    const profesor = await this.profesorRepository.findOne({ where: { id: profesorId }});
     if (!profesor){
-      throw new Error('Profesor no encontrado');
+      throw new NotFoundException('Profesor no encontrado');
     }
     const departamento = this.departamentoRepository.create({
       ...createDepartamentoDto,
-      profesor,
+      profesor: [profesor], // Asignar el profesor en un array
     });
 
     return await this.departamentoRepository.save(departamento);
   }
 
-  findAll() {
-    return `This action returns all departamento`;
+  async findOne(profesorId: number): Promise<Departamento> {
+    const profesor = await this.profesorRepository.findOne({ where: { id: profesorId }, relations: ['departamento'] });
+    if (!profesor) {
+      throw new NotFoundException('Profesor no encontrado');
+    }
+    if (!profesor.departamento) {
+      throw new NotFoundException('El profesor no está asociado a ningún departamento');
+    }
+    const departamento = await this.departamentoRepository.findOne({ where: { id: profesor.departamento.id }, relations: ['profesor'] });
+    return departamento;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} departamento`;
-  }
-
-  async update(id: number, updateDepartamentoDto: UpdateDepartamentoDto): Promise<Departamento> {
-    const departamento = await this.departamentoRepository.findOne({ where: {id}});
+  async update(profesorId: number, updateDepartamentoDto: UpdateDepartamentoDto): Promise<Departamento> {
+    const departamento = await this.departamentoRepository.findOne({ where: { id: profesorId }});
     Object.assign(departamento, updateDepartamentoDto);
     return await this.departamentoRepository.save(departamento);
   }
