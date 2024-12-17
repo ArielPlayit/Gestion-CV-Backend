@@ -33,8 +33,8 @@ export class CursoService {
     return await this.cursoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
-  async update(id: number, updateCursoDto: UpdateCursoDto): Promise<Curso> {
-    const curso = await this.cursoRepository.findOne({ where: {id}});
+  async update(profesorId: number, updateCursoDto: UpdateCursoDto): Promise<Curso> {
+    const curso = await this.cursoRepository.findOne({ where: {id: profesorId}});
     Object.assign(curso, updateCursoDto);
     return await this.cursoRepository.save(curso);
   }

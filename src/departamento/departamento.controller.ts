@@ -21,7 +21,7 @@ export class DepartamentoController {
     return await this.departamentoService.findOne(profesorId);
   }
 
-  @Patch(':id')
+  @Patch()
   async update(@Body() updateDepartamentoDto: UpdateDepartamentoDto, @Req() req: any) {
     const profesorId = req.user.profesorId;
     return await this.departamentoService.update(profesorId, updateDepartamentoDto);
