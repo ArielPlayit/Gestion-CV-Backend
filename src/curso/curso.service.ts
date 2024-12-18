@@ -25,7 +25,6 @@ export class CursoService {
       ...createCursoDto,
       profesor,
     });
-    
     return await this.cursoRepository.save(curso);
   }
 

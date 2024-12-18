@@ -16,18 +16,15 @@ export class IdiomaController {
   }
 
   @Get()
-  findAll() {
-    return this.idiomaService.findAll();
+  async findOne(@Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.idiomaService.findOne(profesorId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.idiomaService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIdiomaDto: UpdateIdiomaDto) {
-    return this.idiomaService.update(+id, updateIdiomaDto);
+  @Patch()
+  update(@Body() updateIdiomaDto: UpdateIdiomaDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.idiomaService.update(profesorId, updateIdiomaDto);
   }
 
   @Delete(':id')
