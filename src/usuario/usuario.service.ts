@@ -7,6 +7,7 @@ import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
 import { Profesor } from 'src/profesor/entities/profesor.entity';
 import * as bcrypt from 'bcrypt';
+import { take } from 'rxjs';
 
 @Injectable()
 export class UsuarioService {
@@ -37,6 +38,7 @@ export class UsuarioService {
 
   async findByUsername(username: string): Promise<Usuario | undefined> {
     return await this.usuarioRepository.findOne({ where: { username }, relations: ['profesor'] });
+      take(10)
   }
 
   findAll() {
@@ -76,3 +78,7 @@ export class UsuarioService {
     await this.usuarioRepository.delete(id);
   }
 }
+function limit(arg0: number) {
+  throw new Error('Function not implemented.');
+}
+

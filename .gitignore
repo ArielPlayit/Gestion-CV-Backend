@@ -2,8 +2,8 @@
 /dist
 /node_modules
 /build
-postgres/
-postgres\
+/postgres
+
 
 
 # Logs
