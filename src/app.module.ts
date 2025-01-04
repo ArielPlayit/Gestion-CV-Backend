@@ -15,6 +15,7 @@ import { DepartamentoModule } from './departamento/departamento.module';
 import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { SolicitudModule } from './solicitud/solicitud.module';
+import { PdfModule } from './pdf/pdf.module';
 
 
 @Module({
@@ -42,6 +43,7 @@ import { SolicitudModule } from './solicitud/solicitud.module';
     DepartamentoModule,
     AuthModule,
     SolicitudModule,
+    PdfModule,
   ],
 })
 export class AppModule {}

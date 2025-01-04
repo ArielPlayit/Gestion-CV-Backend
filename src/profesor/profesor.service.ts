@@ -12,35 +12,37 @@ export class ProfesorService {
     private readonly profesorRepository: Repository<Profesor>,
   ) {}
   
-  
   async create(createProfesorDto: CreateProfesorDto) {
-
-    try{
+    try {
       const profesor = this.profesorRepository.create(createProfesorDto);
       await this.profesorRepository.save(profesor);
     } catch (error) {
-      // Handle the error appropriately
       throw new Error(`Error creating profesor: ${error.message}`);
     }
   }
 
   findAll(): Promise<Profesor[]> {
-    return this.profesorRepository.find({relations: ['profesor']});
+    return this.profesorRepository.find({ relations: ['idioma', 'curso'] });
   }
 
-  async findOne(id: number) {
-    const profesor = await this.profesorRepository.findOneBy({id});
-    if( !profesor)
-      throw new NotFoundException(`No existe profesor con el ${id}`)
+  async findOne(id: number): Promise<Profesor> {
+    const profesor = await this.profesorRepository.findOne({
+      where: { id },
+      relations: ['idioma', 'curso'],
+    });
+    if (!profesor) {
+      throw new NotFoundException(`No existe profesor con el ID ${id}`);
+    }
     return profesor;
   }
 
-  async updateByUsuarioId(usuarioId: number, updateProfesorDto: UpdateProfesorDto): Promise<Profesor>{
+  async updateByUsuarioId(usuarioId: number, updateProfesorDto: UpdateProfesorDto): Promise<Profesor> {
     const profesor = await this.profesorRepository.findOne({
-      where: { usuario: { id: usuarioId}}
-    })
-    Object.assign(profesor, updateProfesorDto)
-    return await this.profesorRepository.save(profesor)
+      where: { usuario: { id: usuarioId } },
+      relations: ['idioma', 'curso'],
+    });
+    Object.assign(profesor, updateProfesorDto);
+    return await this.profesorRepository.save(profesor);
   }
 
   remove(id: number) {

@@ -86,9 +86,9 @@ export class Profesor {
     @OneToOne(() => Usuario, usuario => usuario.profesor)
     @JoinColumn() usuario: Usuario;
     @OneToMany(() => Idioma, idioma => idioma.profesor, {cascade: true})
-    idioma: Idioma;
+    idioma: Idioma[];
     @OneToMany(() => Curso, curso => curso.profesor, {cascade: true})
-    curso: Curso;
+    curso: Curso[];
     @OneToMany(() => Tesis, tesis => tesis.profesor, {cascade: true})
     tesis: Tesis;
     @OneToMany(() => Proyecto, proyecto => proyecto.profesor, {cascade: true})
