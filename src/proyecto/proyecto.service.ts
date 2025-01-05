@@ -25,8 +25,8 @@ export class ProyectoService {
     return await this.proyectoRepository.save(proyecto);
   }
 
-  findAll(): Promise<Proyecto[]> {
-    return this.proyectoRepository.find({ relations: ['profesor']});
+  async findOne(profesorId: number): Promise<Proyecto[]> {
+    return await this.proyectoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
   async findByProfesorName(profesorName: string): Promise<Proyecto[]> {
@@ -36,8 +36,8 @@ export class ProyectoService {
     });
   }
 
-  async update(id: number, updateProyectoDto: UpdateProyectoDto): Promise<Proyecto> {
-    const proyecto = await this.proyectoRepository.findOne({ where: {id}});
+  async update(profesorId: number, updateProyectoDto: UpdateProyectoDto): Promise<Proyecto> {
+    const proyecto = await this.proyectoRepository.findOne({ where: { profesor: { id: profesorId } } });
     Object.assign(proyecto, updateProyectoDto);
     return await this.proyectoRepository.save(proyecto);
   }

@@ -1,24 +1,25 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { Rol } from "../entities/proyecto.entity";
 
 export class CreateProyectoDto {
     @IsNotEmpty()
     @IsString()
-    nombre: string
+    nombre: string;
 
     @IsNotEmpty()
     @IsString()
-    descripcion: string
+    descripcion: string;
 
     @IsNotEmpty()
-    @IsString()
-    rol: string
-
-    @IsNotEmpty()
-    @Type(() => Date)
-    fechaInicio: Date
+    @IsEnum(Rol)
+    rol?: string;
 
     @IsNotEmpty()
     @Type(() => Date)
-    fechaFin: Date 
+    fechaInicio: Date;
+
+    @IsNotEmpty()
+    @Type(() => Date)
+    fechaFin: Date ;
 }
