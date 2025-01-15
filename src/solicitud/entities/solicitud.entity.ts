@@ -1,14 +1,24 @@
-import { Usuario } from "src/usuario/entities/usuario.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Profesor } from 'src/profesor/entities/profesor.entity';
+
+export enum EstadoSolicitud {
+  Pendiente = 'Pendiente',
+  Aprobada = 'Aprobada',
+  Rechazada = 'Rechazada',
+}
 
 @Entity()
-export class Solicitud {
-    @PrimaryGeneratedColumn() id: number;
+export class SolicitudJefeDepartamento {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(() => Usuario, usuario => usuario.solicitudes)
-    usuario: Usuario;
+  @ManyToOne(() => Profesor, { eager: true })
+  @JoinColumn()
+  profesor: Profesor;
 
-    @Column()rolSolicitado: string;
+  @Column({ type: 'enum', enum: EstadoSolicitud, default: EstadoSolicitud.Pendiente })
+  estado: EstadoSolicitud;
 
-    @Column({ default: 'Pendiente'}) estado: string
+  @Column('text', { nullable: true })
+  comentarios: string; // Comentarios del administrador
 }

@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
-import { SolicitudService } from './solicitud.service';
-import { CreateSolicitudDto } from './dto/create-solicitud.dto';
-import { UpdateSolicitudDto } from './dto/update-solicitud.dto';
+import { Controller, Post, Get, Patch, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { SolicitudJefeDepartamentoService } from './solicitud.service';
+import { CreateSolicitudDto } from './dto/create-solicitud.dto';
+import { UpdateSolicitudDto } from './dto/update-solicitud.dto';
 
-@Controller('solicitud')
-@UseGuards(JwtAuthGuard)
-export class SolicitudController {
-  constructor(private readonly solicitudService: SolicitudService) {}
+@Controller('solicitudes')
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class SolicitudJefeDepartamentoController {
+  constructor(private readonly solicitudService: SolicitudJefeDepartamentoService) {}
 
   @Post()
-  create(@Body() createSolicitudDto: CreateSolicitudDto, @Req() req: any) {
-    const usuarioId = req.user.userId;
-    return this.solicitudService.create(createSolicitudDto, usuarioId);
+  @Roles('Profesor')
+  async create(@Req() req: any, @Body() createSolicitudDto: CreateSolicitudDto) {
+    const profesorId = req.user.profesorId;
+    return this.solicitudService.create(profesorId, createSolicitudDto);
   }
 
   @Get()
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  findAll() {
+  async findAll() {
     return this.solicitudService.findAll();
   }
 
-  @Patch(':id/estado')
+  @Patch(':id')
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  updateEstado(@Param('id') id: number, @Body('estado') estado: string) {
-    return this.solicitudService.updateEstado(id, estado);
+  async update(@Param('id') id: number, @Body() updateSolicitudDto: UpdateSolicitudDto) {
+    return this.solicitudService.update(id, updateSolicitudDto);
   }
-
 }
+
+export { SolicitudJefeDepartamentoController as SolicitudController };

@@ -1,7 +1,7 @@
-import { IsEnum, IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateSolicitudDto {
+  @IsString()
   @IsNotEmpty()
-  @IsEnum(['Jefe_Departamento'])
-  rolSolicitado: string;
+  comentarios: string;
 }

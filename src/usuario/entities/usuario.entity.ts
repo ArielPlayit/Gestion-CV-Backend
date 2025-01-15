@@ -1,4 +1,4 @@
-import { Solicitud } from "src/solicitud/entities/solicitud.entity";
+import { SolicitudJefeDepartamento } from "src/solicitud/entities/solicitud.entity";
 import { Profesor } from "src/profesor/entities/profesor.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -19,7 +19,6 @@ export class Usuario {
     @OneToOne(() => Profesor, profesor => profesor.usuario, { cascade: true })
     profesor: Profesor;
 
-    @OneToMany(() => Solicitud, solicitud => solicitud.usuario)
-    solicitudes: Solicitud[];
+    @OneToMany(() => SolicitudJefeDepartamento, solicitud => solicitud.profesor.usuario)
+    solicitudes: SolicitudJefeDepartamento[];
 }
-
