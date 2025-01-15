@@ -6,6 +6,7 @@ import { CreateSolicitudDto } from './dto/create-solicitud.dto';
 import { UpdateSolicitudDto } from './dto/update-solicitud.dto';
 import { Profesor } from 'src/profesor/entities/profesor.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { Departamento } from '../departamento/entities/departamento.entity';
 
 @Injectable()
 export class SolicitudJefeDepartamentoService {
@@ -22,6 +23,10 @@ export class SolicitudJefeDepartamentoService {
     const profesor = await this.profesorRepository.findOne({ where: { id: profesorId }, relations: ['usuario'] });
     if (!profesor) {
       throw new NotFoundException('Profesor no encontrado');
+    }
+
+    if (!profesor.departamento){
+      throw new Error('El profesor no pertenece a ningun departamento');
     }
 
     const solicitud = this.solicitudRepository.create({
