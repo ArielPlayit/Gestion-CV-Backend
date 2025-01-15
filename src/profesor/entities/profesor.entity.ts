@@ -97,6 +97,6 @@ export class Profesor {
     publicacion: Publicacion;
     @OneToMany(() => Reconocimiento, reconocimiento => reconocimiento.profesor, {cascade: true})
     reconocimiento: Reconocimiento;
-    @ManyToOne(() => Departamento, departamento => departamento.profesor, {cascade: true})
+    @ManyToOne(() => Departamento, departamento => departamento.profesores, {cascade: true})
     departamento: Departamento;
 }

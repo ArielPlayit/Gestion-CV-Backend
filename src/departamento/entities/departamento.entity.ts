@@ -10,6 +10,6 @@ export class Departamento {
     })nombre: string;
     
     @OneToMany(() => Profesor, profesor => profesor.departamento)
-    profesor: Profesor[];
+    profesores: Profesor[];
 
 }
