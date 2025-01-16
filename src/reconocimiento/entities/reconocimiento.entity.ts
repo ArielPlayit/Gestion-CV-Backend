@@ -8,6 +8,6 @@ export class Reconocimiento {
     @Column()lugar: string;
     @Column()fecha: Date;
      
-    @ManyToOne(() => Profesor, profesor => profesor.reconocimiento)
+    @ManyToOne(() => Profesor, profesor => profesor.reconocimiento, { onDelete: 'CASCADE'})
     @JoinColumn()profesor: Profesor;
 }

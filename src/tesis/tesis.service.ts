@@ -29,9 +29,10 @@ export class TesisService {
     return await this.tesisRepository.save(tesis);
   }
 
-  findAll(): Promise<Tesis[]> {
-    return this.tesisRepository.find({ relations: ['profesor']});
+  async findOne(profesorId: number): Promise<Tesis[]> {
+    return await this.tesisRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
+  
   async findByProfesorName(profesorName: string): Promise<Tesis[]> {
     return await this.tesisRepository.find({
       where: {profesor: { nombre: profesorName}},
@@ -39,8 +40,8 @@ export class TesisService {
     });
   }
 
-  async update(id: number, updateTesiDto: UpdateTesiDto): Promise<Tesis> {
-    const tesis = await this.tesisRepository.findOne({ where: { id}});
+  async update(profesorId: number, updateTesiDto: UpdateTesiDto): Promise<Tesis> {
+    const tesis = await this.tesisRepository.findOne({ where: { profesor: { id: profesorId } } });
     Object.assign(tesis, updateTesiDto);
     return await this.tesisRepository.save(tesis);
   }

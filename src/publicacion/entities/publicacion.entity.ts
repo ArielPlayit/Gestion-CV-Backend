@@ -17,6 +17,6 @@ export class Publicacion {
     @Column({type: 'enum', enum: Rol})tipo: string;
     @Column()lugar: string;
     @Column()fecha: Date;
-    @ManyToOne(() => Profesor, profesor => profesor.publicacion)
+    @ManyToOne(() => Profesor, profesor => profesor.publicacion, { onDelete: 'CASCADE'})
     @JoinColumn()profesor: Profesor;
 }

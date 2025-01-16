@@ -10,25 +10,21 @@ export class TesisController {
   constructor(private readonly tesisService: TesisService) {}
 
   @Post()
-  async create(@Body() createTesisDto: CreateTesisDto, @Req() req: any) {
+  create(@Body() createTesisDto: CreateTesisDto, @Req() req: any) {
     const profesorId = req.user.profesorId; // Obtenemos el profesorId del token
-    const rol = req.user.rol // Obtenemos el rol del token
-    return await this.tesisService.create(createTesisDto, profesorId);
+    return this.tesisService.create(createTesisDto, profesorId);
   }
 
   @Get()
-  findAll() {
-    return this.tesisService.findAll();
+  async findOne(@Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.tesisService.findOne(profesorId);
   }
 
-  @Get('profesor/nombre/:nombre')
-  findOne(@Param('nombre') nombre: string) {
-    return this.tesisService.findByProfesorName(nombre);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTesiDto: UpdateTesiDto) {
-    return this.tesisService.update(+id, updateTesiDto);
+  @Patch()
+  update(@Body() updateTesiDto: UpdateTesiDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.tesisService.update(profesorId, updateTesiDto);
   }
 
   @Delete(':id')

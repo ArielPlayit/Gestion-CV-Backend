@@ -16,18 +16,15 @@ export class ReconocimientoController {
   }
 
   @Get()
-  findAll() {
-    return this.reconocimientoService.findAll();
+  async findOne(@Req() req: any) {
+    const profesorId = req.user.profesorId
+    return await this.reconocimientoService.findOne(profesorId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reconocimientoService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReconocimientoDto: UpdateReconocimientoDto) {
-    return this.reconocimientoService.update(+id, updateReconocimientoDto);
+  @Patch()
+  update(@Body() updateReconocimientoDto: UpdateReconocimientoDto, @Req() req: any) {
+    const profesorId = req.user.profesorId
+    return this.reconocimientoService.update(profesorId, updateReconocimientoDto);
   }
 
   @Delete(':id')

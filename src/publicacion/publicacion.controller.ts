@@ -10,24 +10,21 @@ export class PublicacionController {
   constructor(private readonly publicacionService: PublicacionService) {}
 
   @Post()
-  create(@Body() createPublicacionDto: CreatePublicacionDto, @Req() req: any) {
+  async create(@Body() createPublicacionDto: CreatePublicacionDto, @Req() req: any) {
     const profesorId = req.user.profesorId;
-    return this.publicacionService.create(createPublicacionDto, profesorId);
+    return await this.publicacionService.create(createPublicacionDto, profesorId);
   }
 
   @Get()
-  findAll() {
-    return this.publicacionService.findAll();
+  async findOne(@Req() req: any) {
+    const profesorId =  req.user.profesorId;
+    return await this.publicacionService.findOne(profesorId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.publicacionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePublicacionDto: UpdatePublicacionDto) {
-    return this.publicacionService.update(+id, updatePublicacionDto);
+  @Patch()
+  update(@Body() updatePublicacionDto: UpdatePublicacionDto, @Req() req: any) {
+    const profesorId  =  req.user.profesorId;
+    return this.publicacionService.update(profesorId, updatePublicacionDto);
   }
 
   @Delete(':id')

@@ -15,7 +15,7 @@ export class Curso {
     @Column()fechainicio: Date;
     @Column()fechafin: Date
 
-    @ManyToOne(() => Profesor, profesor => profesor.curso)
+    @ManyToOne(() => Profesor, profesor => profesor.curso, { onDelete: 'CASCADE'})
     @JoinTable() profesor: Profesor
 
 }

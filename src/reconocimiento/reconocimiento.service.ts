@@ -24,16 +24,12 @@ export class ReconocimientoService {
     return await this.reconocimientoRepository.save(reconocimiento);
   }
 
-  findAll(): Promise<Reconocimiento[]> {
-    return this.reconocimientoRepository.find({ relations: ['profesor']});
+  async findOne(profesorId: number): Promise<Reconocimiento[]> {
+    return await this.reconocimientoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reconocimiento`;
-  }
-
-  async update(id: number, updateReconocimientoDto: UpdateReconocimientoDto): Promise<Reconocimiento> {
-    const reconocimiento =  await this.reconocimientoRepository.findOne({ where: {id}});
+  async update(profesorId: number, updateReconocimientoDto: UpdateReconocimientoDto): Promise<Reconocimiento> {
+    const reconocimiento =  await this.reconocimientoRepository.findOne({ where: { profesor: { id: profesorId } } });
     Object.assign(reconocimiento, updateReconocimientoDto);
     return await this.reconocimientoRepository.save(reconocimiento);
   }

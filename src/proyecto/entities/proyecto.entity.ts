@@ -17,7 +17,7 @@ export class Proyecto {
     @Column()fechaInicio: Date;
     @Column()fechaFin: Date;
 
-    @ManyToOne(() => Profesor, profesor => profesor.proyecto)
+    @ManyToOne(() => Profesor, profesor => profesor.proyecto, { onDelete: 'CASCADE'})
     @JoinColumn() profesor: Profesor;
 
 

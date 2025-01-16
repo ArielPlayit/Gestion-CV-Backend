@@ -83,7 +83,7 @@ export class Profesor {
     
     @Column('text',{ nullable: true})posicion_actual: string;
 
-    @OneToOne(() => Usuario, usuario => usuario.profesor)
+    @OneToOne(() => Usuario, usuario => usuario.profesor, {onDelete: 'CASCADE', nullable: true})
     @JoinColumn() usuario: Usuario;
     @OneToMany(() => Idioma, idioma => idioma.profesor, {cascade: true})
     idioma: Idioma[];

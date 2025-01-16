@@ -44,7 +44,7 @@ export class SolicitudJefeDepartamentoService {
   async update(id: number, updateSolicitudDto: UpdateSolicitudDto) {
     const solicitud = await this.solicitudRepository.findOne({
       where: { id },
-      relations: ['profesor', 'profesor.usuario'],
+      relations: ['profesor','profesor.departamento', 'profesor.usuario'],
     });
 
     if (!solicitud) {

@@ -12,6 +12,6 @@ export class Tesis {
     })nivel:string;
     @Column()anodefensa: Date;
 
-    @ManyToOne(() => Profesor, profesor => profesor.tesis)
+    @ManyToOne(() => Profesor, profesor => profesor.tesis, { onDelete: 'CASCADE'})
     @JoinColumn()profesor: Profesor;
 }

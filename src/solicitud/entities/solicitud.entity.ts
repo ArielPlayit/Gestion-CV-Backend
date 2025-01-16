@@ -12,7 +12,7 @@ export class SolicitudJefeDepartamento {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Profesor, { eager: true })
+  @ManyToOne(() => Profesor, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   profesor: Profesor;
 

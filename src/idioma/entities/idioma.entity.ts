@@ -16,7 +16,7 @@ export class Idioma {
     @Column()escribe: boolean;
     @Column()habla: boolean;
 
-    @ManyToOne(() => Profesor, profesor => profesor.idioma)
+    @ManyToOne(() => Profesor, profesor => profesor.idioma, { onDelete: 'CASCADE'})
     @JoinColumn()profesor: Profesor;
 
 
