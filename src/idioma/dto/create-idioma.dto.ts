@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsBoolean } from "class-validator";
 
 export class CreateIdiomaDto {
     @IsNotEmpty()
@@ -6,18 +6,18 @@ export class CreateIdiomaDto {
     idioma: string;
 
     @IsNotEmpty()
-    @IsString()
+    @IsBoolean()
     lee: boolean;
 
     @IsNotEmpty()
-    @IsString()
+    @IsBoolean()
     traduce: boolean;
 
     @IsNotEmpty()
-    @IsString()
+    @IsBoolean()
     escribe: boolean;
 
     @IsNotEmpty()
-    @IsString()
+    @IsBoolean()
     habla: boolean;
 }

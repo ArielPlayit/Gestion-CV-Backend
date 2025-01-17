@@ -11,10 +11,10 @@ export class Idioma {
         default: 'Espanol'
     })idioma: string;
 
-    @Column()lee: boolean;
-    @Column()traduce: boolean;
-    @Column()escribe: boolean;
-    @Column()habla: boolean;
+    @Column({ type: 'boolean'}) lee: boolean;
+    @Column({ type: 'boolean'}) traduce: boolean;
+    @Column({ type: 'boolean'}) escribe: boolean;
+    @Column({ type: 'boolean'}) habla: boolean;
 
     @ManyToOne(() => Profesor, profesor => profesor.idioma, { onDelete: 'CASCADE'})
     @JoinColumn()profesor: Profesor;
