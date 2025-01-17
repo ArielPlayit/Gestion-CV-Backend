@@ -16,10 +16,15 @@ import { AuthModule } from './auth/auth.module';
 import { Usuario } from './usuario/entities/usuario.entity';
 import { SolicitudModule } from './solicitud/solicitud.module';
 import { PdfModule } from './pdf/pdf.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 6,
+    }]),
     ConfigModule.forRoot(),
     TypeOrmModule.forFeature([Usuario]),
     TypeOrmModule.forRoot({

@@ -5,9 +5,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as csurf from 'csurf';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.set('trust proxy', 'loopback')
   app.setGlobalPrefix('api/cv');
 
   //Habilitar CORS

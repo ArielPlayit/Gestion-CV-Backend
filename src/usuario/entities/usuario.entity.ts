@@ -16,6 +16,12 @@ export class Usuario {
         default: 'Profesor'
     }) rol: string;
 
+    @Column({ default: false})
+    isBlocked: boolean;
+
+    @Column({ nullable: true})
+    blockedUntil: Date;
+
     @OneToOne(() => Profesor, profesor => profesor.usuario, { cascade: true })
     profesor: Profesor;
 
