@@ -12,7 +12,7 @@ import * as bcrypt from 'bcrypt';
     TypeOrmModule.forFeature([Usuario])],
   controllers: [UsuarioController],  // Aquí va el controlador
   providers: [UsuarioService],       // Aquí va el servicio
-  exports: [UsuarioService],  
+  exports: [UsuarioService,  TypeOrmModule],  
 })
 export class UsuarioModule implements OnApplicationBootstrap {constructor(private readonly usuarioService: UsuarioService) {}
 

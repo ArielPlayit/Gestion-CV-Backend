@@ -6,10 +6,10 @@ export class Departamento {
     @PrimaryGeneratedColumn()id: number;
     @Column({
         type: 'enum',
-        enum: ['Fisica','Informatica','Ciberseguridad']
+        enum: ['Fisica','Informatica','Ciberseguridad'],
     })nombre: string;
     
-    @OneToMany(() => Profesor, profesor => profesor.departamento)
+    @OneToMany(() => Profesor, profesor => profesor.departamento, { cascade: true })
     profesores: Profesor[];
 
 }

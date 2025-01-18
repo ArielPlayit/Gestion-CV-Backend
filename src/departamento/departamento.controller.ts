@@ -21,6 +21,12 @@ export class DepartamentoController {
     return await this.departamentoService.findOne(profesorId);
   }
 
+  @Get('profesores')
+  async findAll(@Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.departamentoService.findAll(profesorId);
+  }
+
   @Patch()
   async update(@Body() updateDepartamentoDto: UpdateDepartamentoDto, @Req() req: any) {
     const profesorId = req.user.profesorId;

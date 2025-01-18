@@ -38,7 +38,6 @@ export class UsuarioService {
 
   async findByUsername(username: string): Promise<Usuario | undefined> {
     return await this.usuarioRepository.findOne({ where: { username }, relations: ['profesor'] });
-      take(10)
   }
 
   findAll() {
