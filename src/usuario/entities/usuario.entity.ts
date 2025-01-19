@@ -22,6 +22,9 @@ export class Usuario {
     @Column({ nullable: true})
     blockedUntil: Date;
 
+    @Column({ nullable: true})
+    currentSessionToken: string;
+
     @OneToOne(() => Profesor, profesor => profesor.usuario, { cascade: true })
     profesor: Profesor;
 

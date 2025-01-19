@@ -6,36 +6,44 @@ import * as csurf from 'csurf';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.set('trust proxy', 'loopback')
+  app.set('trust proxy', 'loopback');
   app.setGlobalPrefix('api/cv');
 
-  //Habilitar CORS
-  app.enableCors();
+  // Habilitar CORS
+  app.enableCors({
+    origin: 'http://localhost:3000', // Cambia esto a tu dominio frontend
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
-  .setTitle('Cats example')
-  .setDescription('The cats API description')
-  .setVersion('1.0')
-  .addTag('cats')
-  .build();
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-  await app.listen(process.env.PORT ?? 3000);
 
   app.use(helmet());
-  app.use(csurf());
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }));
-  app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // Limita cada IP a 100 solicitudes por ventana de 15 minutos
-  }));
-  
+  app.use(cookieParser());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutos
+      max: 100, // Limita cada IP a 100 solicitudes por ventana de 15 minutos
+    }),
+  );
+
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -4,39 +4,41 @@ import { RegisterDto, LoginDto } from './dto/create-auth.dto';
 import { UsuarioService } from 'src/usuario/usuario.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUsuarioDto } from 'src/usuario/dto/create-usuario.dto';
-import { SecurityService} from 'src/ip/security.service';
+import { SecurityService } from 'src/ip/security.service';
+import { Response } from 'express';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usuarioService: UsuarioService,
     private readonly jwtService: JwtService,
     private readonly securityService: SecurityService,
-  ){}
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<any> {
     const { username, password, confirmPassword, rol } = registerDto;
-    
+
     if (password !== confirmPassword) {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
-  
+
     const existingUser = await this.usuarioService.findByUsername(username);
     if (existingUser) {
       throw new ConflictException('El usuario ya está registrado');
     }
-  
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const usuarioData: CreateUsuarioDto = {
       username,
       password: hashedPassword,
-      rol: rol || 'Profesor'
+      rol: rol || 'Profesor',
     };
     const usuario = await this.usuarioService.create(usuarioData);
-  
+
     return { message: 'Usuario registrado correctamente' };
   }
 
-  async login(loginDto: LoginDto, request: any): Promise<{ accessToken: string, message: string }> {
+  async login(loginDto: LoginDto, request: any, response: Response): Promise<{ message: string }> {
     const { username, password } = loginDto;
 
     // Verificar si la IP está bloqueada
@@ -55,18 +57,26 @@ export class AuthService {
       await this.securityService.registrarIntentoFallido(ip, username);
       throw new UnauthorizedException('Credenciales incorrectas');
     }
-  
+
     const isPasswordValid = await bcrypt.compare(password, usuario.password);
     if (!isPasswordValid) {
       await this.securityService.registrarIntentoFallido(ip, username);
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 
-    // // Limpiar intentos fallidos después de un inicio de sesión exitoso
-    // await this.securityService.limpiarIntentosFallidos(ip);
-  
     const payload = { username: usuario.username, sub: usuario.id, rol: usuario.rol, profesorId: usuario.profesor?.id };
     const accessToken = this.jwtService.sign(payload);
-    return { accessToken, message: 'El usuario ha logrado acceder' };
+    // Guarda el token en la BD
+    usuario.currentSessionToken = accessToken;
+    await this.usuarioService.updateSessionToken(usuario.id, accessToken);
+
+    // Establecer la cookie
+    response.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Usar solo en HTTPS en producción
+      maxAge: 60 * 60 * 1000, // 1 hora
+    });
+
+    return { message: 'El usuario ha logrado acceder' };
   }
 }

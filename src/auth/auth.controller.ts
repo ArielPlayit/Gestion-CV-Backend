@@ -1,15 +1,12 @@
-import { Controller, Post, Body, Req, UseGuards, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/create-auth.dto';
-import { Roles } from './roles.decorator';
-import { RolesGuard} from './roles.guard';
-import { SecurityService } from 'src/ip/security.service';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly securityService: SecurityService,
   ) {}
   
   @Post('register')
@@ -18,8 +15,11 @@ export class AuthController {
   }
   
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Req() request: any) {
-    return this.authService.login(loginDto, request);
+  async login(
+    @Body() loginDto: LoginDto, 
+    @Req () request: any,
+    @Res({ passthrough: true }) response: Response) {
+    return this.authService.login(loginDto, request, response);
   }
   
 }

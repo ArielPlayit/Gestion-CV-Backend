@@ -76,8 +76,13 @@ export class UsuarioService {
     await this.profesorRepository.delete({ usuario: { id}})
     await this.usuarioRepository.delete(id);
   }
-}
-function limit(arg0: number) {
-  throw new Error('Function not implemented.');
+
+  async findById(id: number): Promise<Usuario> {
+    return this.usuarioRepository.findOne({ where: { id } });
+  }
+
+  async updateSessionToken(id: number, token: string): Promise<void> {
+    await this.usuarioRepository.update(id, { currentSessionToken: token });
+  }
 }
 
