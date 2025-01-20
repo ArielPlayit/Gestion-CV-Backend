@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsuarioModule } from 'src/usuario/usuario.module';
@@ -15,7 +15,7 @@ import { FailedAttempt } from 'src/ip/entities/failedattempt.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    UsuarioModule,
+    forwardRef(() => UsuarioModule),
     TypeOrmModule.forFeature([Usuario, BlockedIp, FailedAttempt]), // Importar el TypeOrmModule con las entidades Usuario y BlockedIp
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -29,5 +29,6 @@ import { FailedAttempt } from 'src/ip/entities/failedattempt.entity';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, SecurityService],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -21,5 +21,10 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response) {
     return this.authService.login(loginDto, request, response);
   }
+
+  @Post('logout')
+  async logout(@Req() request: any, @Res({ passthrough: true }) response: Response) {
+    return this.authService.logout(request, response);
+  }
   
 }

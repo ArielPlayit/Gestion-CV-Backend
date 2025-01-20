@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUsuarioDto } from 'src/usuario/dto/create-usuario.dto';
 import { SecurityService } from 'src/ip/security.service';
 import { Response } from 'express';
+import { ChangePasswordDto } from 'src/usuario/dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +44,7 @@ export class AuthService {
 
     // Verificar si la IP está bloqueada
     const ip = request.ip; // Obtén la IP del cliente
+    console.log('verificando ip', ip)
     if (await this.securityService.verificarIpBloqueada(ip)) {
       throw new UnauthorizedException('La IP está bloqueada debido a múltiples intentos fallidos');
     }
@@ -75,8 +77,50 @@ export class AuthService {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Usar solo en HTTPS en producción
       maxAge: 60 * 60 * 1000, // 1 hora
+      sameSite: 'strict'
     });
 
     return { message: 'El usuario ha logrado acceder' };
+  }
+
+  async logout(request: any, response: Response): Promise<{ message: string }> {
+    // Eliminar la cookie
+    response.clearCookie('accessToken');
+
+    // Eliminar el token de la BD
+    const usuario = await this.usuarioService.findById(request.user.id);
+    usuario.currentSessionToken = null;
+    await this.usuarioService.updateSessionToken(usuario.id, null);
+
+    return { message: 'El usuario ha salido correctamente' };
+  }
+
+  async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<{ message: string }> {
+    const { currentPassword, newPassword } = changePasswordDto;
+
+    // Obtener el usuario de la base de datos
+    const usuario = await this.usuarioService.findById(userId);
+    if (!usuario) {
+      throw new UnauthorizedException('Usuario no encontrado');
+    }
+
+    // Verificar si la contraseña actual es correcta
+    const isPasswordValid = await bcrypt.compare(currentPassword, usuario.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('La contraseña actual es incorrecta');
+    }
+
+    // Verificar que la nueva contraseña sea diferente a la actual
+    const isSamePassword = await bcrypt.compare(newPassword, usuario.password);
+    if (isSamePassword) {
+      throw new BadRequestException('La nueva contraseña no puede ser igual a la actual');
+    }
+
+    // Encriptar la nueva contraseña y actualizarla
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    usuario.password = hashedPassword;
+    await this.usuarioService.updatePassword(userId, hashedPassword);
+
+    return { message: 'Contraseña actualizada correctamente' };
   }
 }

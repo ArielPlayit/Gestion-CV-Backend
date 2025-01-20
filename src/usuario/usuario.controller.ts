@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Req, UnauthorizedException } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -6,11 +6,16 @@ import { UpdateRolDto } from './dto/update-rol.dto'; // Importar UpdateRolDto
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('usuario')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UsuarioController {
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {
@@ -33,10 +38,10 @@ export class UsuarioController {
     return this.usuarioService.findByUsername(name);
   }
 
-  @Patch(':id')
-  @Roles('ADMIN')
-  async update(@Param('id') id: number, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(id, updateUsuarioDto);
+  @Patch(':id/password')
+  async changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: any) {
+    const userId = req.user.userId; // Obtenemos el ID del usuario desde el token JWT
+    return this.authService.changePassword(userId, changePasswordDto);
   }
 
   @Patch(':id/rol')
@@ -46,7 +51,7 @@ export class UsuarioController {
   }
 
   @Patch(':id/username')
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'Profesor')
   async updateUsername(@Param('id') id: number, @Body('username') newUsername: string) {
     return this.usuarioService.updateUsername(id, newUsername);
   }

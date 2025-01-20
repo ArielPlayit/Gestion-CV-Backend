@@ -59,17 +59,13 @@ export class UsuarioService {
     return usuario;
   }
 
-  async update(id: number, updateUsuarioDto: UpdateUsuarioDto): Promise<Usuario> {
-    if (updateUsuarioDto.password){
-      updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, 10);
-    }
-      await this.usuarioRepository.update(id, updateUsuarioDto);
-      return this.findOne(id);
-  }
-
   async updateRol(id: number, updateRolDto: UpdateRolDto): Promise<Usuario>{
     await this.usuarioRepository.update(id, updateRolDto);
     return this.findOne(id);
+  }
+
+  async updatePassword(userId: number, hashedPassword: string): Promise<void> {
+    await this.usuarioRepository.update(userId, { password: hashedPassword });
   }
 
   async remove(id: number): Promise<void> {

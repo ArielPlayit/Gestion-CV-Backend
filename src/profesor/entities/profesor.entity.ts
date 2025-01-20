@@ -90,13 +90,13 @@ export class Profesor {
     @OneToMany(() => Curso, curso => curso.profesor, {cascade: true})
     curso: Curso[];
     @OneToMany(() => Tesis, tesis => tesis.profesor, {cascade: true})
-    tesis: Tesis;
+    tesis: Tesis[];
     @OneToMany(() => Proyecto, proyecto => proyecto.profesor, {cascade: true})
-    proyecto: Proyecto;
+    proyecto: Proyecto[];
     @OneToMany(() => Publicacion, publicacion => publicacion.profesor,{cascade: true})
-    publicacion: Publicacion;
+    publicacion: Publicacion[];
     @OneToMany(() => Reconocimiento, reconocimiento => reconocimiento.profesor, {cascade: true})
-    reconocimiento: Reconocimiento;
+    reconocimiento: Reconocimiento[];
     @ManyToOne(() => Departamento, departamento => departamento.profesores)
     departamento: Departamento;
 }

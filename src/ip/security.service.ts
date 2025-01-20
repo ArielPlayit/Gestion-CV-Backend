@@ -34,32 +34,43 @@ export class SecurityService {
 
     // Contar intentos fallidos recientes
     const now = new Date();
-    const attempts = await this.failedAttemptRepository.count({
+
+    //Bloqueo por Ip
+    const ipAttempts = await this.failedAttemptRepository.count({
       where: {
         ip,
         createdAt: MoreThan(new Date(now.getTime() - 1 * 60 * 1000)), // Intentos en los últimos 15 minutos
       },
     });
-
-    if (attempts >= 2 && attempts < 4) {
+    if ( ipAttempts > 4){
       const blockedUntil = new Date();
       blockedUntil.setMinutes(blockedUntil.getMinutes() + 1);
+      const blockedIp = this.blockedIpRepository.create({ ip, blockedAt: new Date(), blockedUntil});
+      await this.blockedIpRepository.save(blockedIp);
+      console.log( `Ip bloqueada ${ip} hasta $(blockedUntil)`);
+    }
 
+    //Bloqueo por Usuario
+    const userAttempts = await this.failedAttemptRepository.count({
+      where: {
+        username,
+        createdAt: MoreThan(new Date(now.getTime() - 5 * 60 * 1000)), // Intentos en los últimos 5 minutos
+      },
+    });
+      if (userAttempts >= 3) {
+      const blockedUntil = new Date();
+      blockedUntil.setMinutes(blockedUntil.getMinutes() + 1); // Bloquea el usuario durante 30 minutos
+  
       const usuario = await this.usuarioRepository.findOne({ where: { username } });
       if (usuario) {
         usuario.isBlocked = true;
         usuario.blockedUntil = blockedUntil;
         await this.usuarioRepository.save(usuario);
+        console.log(`Usuario ${username} bloqueado hasta ${blockedUntil}`);
       }
     }
 
-    if (attempts >= 4) {
-      const blockedUntil = new Date();
-      blockedUntil.setMinutes(blockedUntil.getMinutes() + 1);
-
-      const blockedIp = this.blockedIpRepository.create({ ip, blockedAt: new Date(), blockedUntil });
-      await this.blockedIpRepository.save(blockedIp);
-    }
+  
   }
 
   async desbloquearIpyUsuario(ip: string, username: string): Promise<void> {
