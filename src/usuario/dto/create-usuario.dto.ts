@@ -7,6 +7,7 @@ export class CreateUsuarioDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)
   password: string;
 
   @IsString()

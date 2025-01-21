@@ -63,6 +63,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, usuario.password);
     if (!isPasswordValid) {
       await this.securityService.registrarIntentoFallido(ip, username);
+      console.log('El usuario',username,'ha introducido mal la contresena')
       throw new UnauthorizedException('Credenciales incorrectas');
     }
 

@@ -1,15 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as csurf from 'csurf';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as cookieParser from 'cookie-parser';
+import { readFileSync } from 'fs';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Carga de los archivos del certificado SSL
+  const httpsOptions = {
+    key: readFileSync('./ssl/key.pem'),
+    cert: readFileSync('./ssl/cert.pem'),
+  }
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {httpsOptions});
   app.set('trust proxy', 'loopback');
   app.setGlobalPrefix('api/cv');
 
@@ -18,15 +22,6 @@ async function bootstrap() {
     origin: 'http://localhost:3000', // Cambia esto a tu dominio frontend
     credentials: true,
   });
-
-  const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
-    .setVersion('1.0')
-    .addTag('cats')
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
 
   app.use(helmet());
   app.use(cookieParser());
@@ -43,7 +38,6 @@ async function bootstrap() {
       max: 100, // Limita cada IP a 100 solicitudes por ventana de 15 minutos
     }),
   );
-
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
