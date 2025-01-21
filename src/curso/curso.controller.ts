@@ -16,19 +16,20 @@ export class CursoController {
   }
 
   @Get()
-  async findOne(@Req() req: any) {
+  async findAll(@Req() req: any) {
     const profesorId = req.user.profesorId;
-    return await this.cursoService.findOne(profesorId);
+    return await this.cursoService.findAll(profesorId);
   }
 
-  @Patch()
-  update(@Body() updateCursoDto: UpdateCursoDto, @Req() req: any) {
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updateCursoDto: UpdateCursoDto, @Req() req: any) {
     const profesorId = req.user.profesorId;
-    return this.cursoService.update(profesorId, updateCursoDto);
+    return await this.cursoService.update(+id,profesorId, updateCursoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cursoService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.cursoService.remove(+id, profesorId);
   }
 }

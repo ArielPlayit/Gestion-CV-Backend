@@ -11,25 +11,25 @@ export class IdiomaController {
 
   @Post()
   async create(@Body() createIdiomaDto: CreateIdiomaDto, @Req() req: any) {
-    console.log('Cookie', req.cookies);
     const profesorId = req.user.profesorId;
     return await this.idiomaService.create(createIdiomaDto, profesorId);
   }
 
   @Get()
-  async findOne(@Req() req: any) {
+  async findAll(@Req() req: any) {
     const profesorId = req.user.profesorId;
-    return await this.idiomaService.findOne(profesorId);
+    return await this.idiomaService.findAll(profesorId);
   }
 
-  @Patch()
-  update(@Body() updateIdiomaDto: UpdateIdiomaDto, @Req() req: any) {
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updateIdiomaDto: UpdateIdiomaDto, @Req() req: any) {
     const profesorId = req.user.profesorId;
-    return this.idiomaService.update(profesorId, updateIdiomaDto);
+    return this.idiomaService.update(+id, profesorId, updateIdiomaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.idiomaService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.idiomaService.remove(+id, profesorId);
   }
 }

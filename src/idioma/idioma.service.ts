@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateIdiomaDto } from './dto/create-idioma.dto';
 import { UpdateIdiomaDto } from './dto/update-idioma.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +15,7 @@ export class IdiomaService {
     private profesorRepository: Repository<Profesor>
   ){}
   async create(createIdiomaDto: CreateIdiomaDto, profesorId: number): Promise<Idioma> {
+    console.log(createIdiomaDto)
     const profesor = await this.profesorRepository.findOne({where: { id: profesorId}});
     if (!profesor){
       throw new Error('Profesor no encontrado');
@@ -26,17 +27,33 @@ export class IdiomaService {
     return await this.idiomaRepository.save(idioma);
   }
 
-  async findOne(profesorId: number): Promise<Idioma[]> {
+  async findAll(profesorId: number): Promise<Idioma[]> {
     return await this.idiomaRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
-  async update(profesorId: number, updateIdiomaDto: UpdateIdiomaDto): Promise<Idioma> {
-    const idioma = await this.idiomaRepository.findOne({ where: { profesor: { id: profesorId } } });
-    Object.assign(idioma, updateIdiomaDto);
-    return await this.idiomaRepository.save(idioma);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} idioma`;
-  }
+  async update(id: number, profesorId: number, updateIdiomaDto: UpdateIdiomaDto): Promise<Idioma> {
+      const idioma = await this.idiomaRepository.findOne({ where: {id}, relations: ['profesor']});
+      if (!idioma) {
+        throw new NotFoundException(`Idioma con ID ${id} no encontrado`);
+      }
+  
+      // Verificar si el profesor que intenta actualizar es el propietario del curso
+      if (idioma.profesor.id !== profesorId) {
+        throw new ForbiddenException('No tienes permiso para actualizar este idioma.');
+      }
+      Object.assign(idioma, updateIdiomaDto);
+      return await this.idiomaRepository.save(idioma);
+    }
+  
+    async remove(id: number, profesorId: number): Promise<{message: string}> {
+      const idioma = await this.idiomaRepository.findOne({ where: {id}, relations: ['profesor']});
+      if (!idioma) {
+        throw new NotFoundException(`Idioma con Id ${id} no encontrado`)
+      }
+      if (idioma.profesor.id !== profesorId) {
+        throw new ForbiddenException('No tienes permisos para eliminar este Idioma')
+      }
+      await this.idiomaRepository.remove(idioma);
+      return {message: `Idioma con ID ${id} eliminado`};
+    }
 }

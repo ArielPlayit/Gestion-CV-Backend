@@ -1,15 +1,20 @@
 import { Profesor } from "src/profesor/entities/profesor.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
+export enum IdiomaEnum {
+    Espanol = 'Espanol',
+    Ingles = 'Ingles',
+  }
+
 @Entity()
 export class Idioma {
     @PrimaryGeneratedColumn()id: number;
 
     @Column({
         type: 'enum',
-        enum: ['Espanol','Ingles'],
-        default: 'Espanol'
-    })idioma: string;
+        enum: IdiomaEnum,
+        default: IdiomaEnum.Espanol
+    })idioma: IdiomaEnum;
 
     @Column({ type: 'boolean'}) lee: boolean;
     @Column({ type: 'boolean'}) traduce: boolean;
