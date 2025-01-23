@@ -22,13 +22,13 @@ export class ProfesorService {
   }
 
   findAll(): Promise<Profesor[]> {
-    return this.profesorRepository.find({ relations: ['idioma', 'curso'] });
+    return this.profesorRepository.find({ relations: ['idioma', 'curso','proyecto','publicacion','reconocimiento','tesis'] });
   }
 
   async findOne(id: number): Promise<Profesor> {
     const profesor = await this.profesorRepository.findOne({
       where: { id },
-      relations: ['idioma', 'curso'],
+      relations: ['idioma', 'curso','proyecto','publicacion','reconocimiento','tesis'],
     });
     if (!profesor) {
       throw new NotFoundException(`No existe profesor con el ID ${id}`);
@@ -39,7 +39,7 @@ export class ProfesorService {
   async updateByUsuarioId(usuarioId: number, updateProfesorDto: UpdateProfesorDto): Promise<Profesor> {
     const profesor = await this.profesorRepository.findOne({
       where: { usuario: { id: usuarioId } },
-      relations: ['idioma', 'curso'],
+      relations: ['idioma', 'curso','proyecto','publicacion','reconocimiento','tesis'],
     });
     Object.assign(profesor, updateProfesorDto);
     return await this.profesorRepository.save(profesor);
