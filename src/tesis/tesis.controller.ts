@@ -21,14 +21,15 @@ export class TesisController {
     return await this.tesisService.findOne(profesorId);
   }
 
-  @Patch()
-  update(@Body() updateTesiDto: UpdateTesiDto, @Req() req: any) {
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updatetesisDto: UpdateTesiDto, @Req() req: any) {
     const profesorId = req.user.profesorId;
-    return this.tesisService.update(profesorId, updateTesiDto);
+    return this.tesisService.update(+id, profesorId, updatetesisDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tesisService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.tesisService.remove(+id, profesorId);
   }
 }

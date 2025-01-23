@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTesisDto } from './dto/create-tesi.dto';
 import { UpdateTesiDto } from './dto/update-tesi.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,13 +40,29 @@ export class TesisService {
     });
   }
 
-  async update(profesorId: number, updateTesiDto: UpdateTesiDto): Promise<Tesis> {
-    const tesis = await this.tesisRepository.findOne({ where: { profesor: { id: profesorId } } });
-    Object.assign(tesis, updateTesiDto);
+  async update(id: number, profesorId: number, updatetesisDto: UpdateTesiDto): Promise<Tesis> {
+    const tesis = await this.tesisRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!tesis) {
+      throw new NotFoundException(`tesis con ID ${id} no encontrado`);
+    }
+
+    // Verificar si el profesor que intenta actualizar es el propietario del curso
+    if (tesis.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permiso para actualizar este tesis.');
+    }
+    Object.assign(tesis, updatetesisDto);
     return await this.tesisRepository.save(tesis);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tesi`;
+  async remove(id: number, profesorId: number): Promise<{message: string}> {
+    const tesis = await this.tesisRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!tesis) {
+      throw new NotFoundException(`tesis con Id ${id} no encontrado`)
+    }
+    if (tesis.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permisos para eliminar este tesis')
+    }
+    await this.tesisRepository.remove(tesis);
+    return {message: `tesis con ID ${id} eliminado`};
   }
 }

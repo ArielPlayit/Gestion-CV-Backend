@@ -21,14 +21,15 @@ export class ReconocimientoController {
     return await this.reconocimientoService.findOne(profesorId);
   }
 
-  @Patch()
-  update(@Body() updateReconocimientoDto: UpdateReconocimientoDto, @Req() req: any) {
-    const profesorId = req.user.profesorId
-    return this.reconocimientoService.update(profesorId, updateReconocimientoDto);
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updatereconocimientoDto: UpdateReconocimientoDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.reconocimientoService.update(+id, profesorId, updatereconocimientoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reconocimientoService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.reconocimientoService.remove(+id, profesorId);
   }
 }

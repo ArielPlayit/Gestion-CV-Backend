@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProyectoDto } from './dto/create-proyecto.dto';
 import { UpdateProyectoDto } from './dto/update-proyecto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,7 +25,7 @@ export class ProyectoService {
     return await this.proyectoRepository.save(proyecto);
   }
 
-  async findOne(profesorId: number): Promise<Proyecto[]> {
+  async findAll(profesorId: number): Promise<Proyecto[]> {
     return await this.proyectoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
@@ -36,13 +36,29 @@ export class ProyectoService {
     });
   }
 
-  async update(profesorId: number, updateProyectoDto: UpdateProyectoDto): Promise<Proyecto> {
-    const proyecto = await this.proyectoRepository.findOne({ where: { profesor: { id: profesorId } } });
-    Object.assign(proyecto, updateProyectoDto);
+  async update(id: number, profesorId: number, updateproyectoDto: UpdateProyectoDto): Promise<Proyecto> {
+    const proyecto = await this.proyectoRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!proyecto) {
+      throw new NotFoundException(`proyecto con ID ${id} no encontrado`);
+    }
+
+    // Verificar si el profesor que intenta actualizar es el propietario del curso
+    if (proyecto.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permiso para actualizar este proyecto.');
+    }
+    Object.assign(proyecto, updateproyectoDto);
     return await this.proyectoRepository.save(proyecto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} proyecto`;
+  async remove(id: number, profesorId: number): Promise<{message: string}> {
+    const proyecto = await this.proyectoRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!proyecto) {
+      throw new NotFoundException(`proyecto con Id ${id} no encontrado`)
+    }
+    if (proyecto.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permisos para eliminar este proyecto')
+    }
+    await this.proyectoRepository.remove(proyecto);
+    return {message: `proyecto con ID ${id} eliminado`};
   }
 }

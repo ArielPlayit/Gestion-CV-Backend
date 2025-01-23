@@ -21,14 +21,15 @@ export class PublicacionController {
     return await this.publicacionService.findOne(profesorId);
   }
 
-  @Patch()
-  update(@Body() updatePublicacionDto: UpdatePublicacionDto, @Req() req: any) {
-    const profesorId  =  req.user.profesorId;
-    return this.publicacionService.update(profesorId, updatePublicacionDto);
+  @Patch(':id')
+  async update(@Param('id') id: number, @Body() updatepublicacionDto: UpdatePublicacionDto, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return this.publicacionService.update(+id, profesorId, updatepublicacionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.publicacionService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId = req.user.profesorId;
+    return await this.publicacionService.remove(+id, profesorId);
   }
 }

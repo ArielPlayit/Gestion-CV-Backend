@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePublicacionDto } from './dto/create-publicacion.dto';
 import { UpdatePublicacionDto } from './dto/update-publicacion.dto';
 import { Profesor } from 'src/profesor/entities/profesor.entity';
@@ -29,13 +29,29 @@ export class PublicacionService {
     return await this.publicacionRepository.find({ where: { profesor : { id: profesorId}}, relations: ['profesor']});
   }
 
-  async update(profesorId: number, updatePublicacionDto: UpdatePublicacionDto): Promise<Publicacion> {
-    const publicacion =  await this.publicacionRepository.findOne({ where: { profesor: { id: profesorId } } });
-    Object.assign(publicacion, updatePublicacionDto);
+  async update(id: number, profesorId: number, updatepublicacionDto: UpdatePublicacionDto): Promise<Publicacion> {
+    const publicacion = await this.publicacionRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!publicacion) {
+      throw new NotFoundException(`publicacion con ID ${id} no encontrado`);
+    }
+
+    // Verificar si el profesor que intenta actualizar es el propietario del curso
+    if (publicacion.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permiso para actualizar este publicacion.');
+    }
+    Object.assign(publicacion, updatepublicacionDto);
     return await this.publicacionRepository.save(publicacion);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} publicacion`;
+  async remove(id: number, profesorId: number): Promise<{message: string}> {
+    const publicacion = await this.publicacionRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!publicacion) {
+      throw new NotFoundException(`publicacion con Id ${id} no encontrado`)
+    }
+    if (publicacion.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permisos para eliminar este publicacion')
+    }
+    await this.publicacionRepository.remove(publicacion);
+    return {message: `publicacion con ID ${id} eliminado`};
   }
 }

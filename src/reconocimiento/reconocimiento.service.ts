@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReconocimientoDto } from './dto/create-reconocimiento.dto';
 import { UpdateReconocimientoDto } from './dto/update-reconocimiento.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,13 +28,29 @@ export class ReconocimientoService {
     return await this.reconocimientoRepository.find({ where: { profesor: { id: profesorId } }, relations: ['profesor'] });
   }
 
-  async update(profesorId: number, updateReconocimientoDto: UpdateReconocimientoDto): Promise<Reconocimiento> {
-    const reconocimiento =  await this.reconocimientoRepository.findOne({ where: { profesor: { id: profesorId } } });
-    Object.assign(reconocimiento, updateReconocimientoDto);
+  async update(id: number, profesorId: number, updatereconocimientoDto: UpdateReconocimientoDto): Promise<Reconocimiento> {
+    const reconocimiento = await this.reconocimientoRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!reconocimiento) {
+      throw new NotFoundException(`reconocimiento con ID ${id} no encontrado`);
+    }
+
+    // Verificar si el profesor que intenta actualizar es el propietario del curso
+    if (reconocimiento.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permiso para actualizar este reconocimiento.');
+    }
+    Object.assign(reconocimiento, updatereconocimientoDto);
     return await this.reconocimientoRepository.save(reconocimiento);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reconocimiento`;
+  async remove(id: number, profesorId: number): Promise<{message: string}> {
+    const reconocimiento = await this.reconocimientoRepository.findOne({ where: {id}, relations: ['profesor']});
+    if (!reconocimiento) {
+      throw new NotFoundException(`reconocimiento con Id ${id} no encontrado`)
+    }
+    if (reconocimiento.profesor.id !== profesorId) {
+      throw new ForbiddenException('No tienes permisos para eliminar este reconocimiento')
+    }
+    await this.reconocimientoRepository.remove(reconocimiento);
+    return {message: `reconocimiento con ID ${id} eliminado`};
   }
 }

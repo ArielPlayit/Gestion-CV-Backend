@@ -16,19 +16,20 @@ export class ProyectoController {
   }
 
   @Get()
-  async findOne(@Req() req: any) {
+  async findAll(@Req() req: any) {
     const profesorId = req.user.profesorId;
-    return await this.proyectoService.findOne(profesorId);
+    return await this.proyectoService.findAll(profesorId);
   }
 
-  @Patch()
-  update(@Body() updateProyectoDto: UpdateProyectoDto, @Req() req: any) {
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() updateProyectoDto: UpdateProyectoDto, @Req() req: any) {
     const profesorId =  req.user.profesorId;
-    return this.proyectoService.update( profesorId, updateProyectoDto);
+    return this.proyectoService.update( +id, profesorId, updateProyectoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.proyectoService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    const profesorId =  req.user.profesorId;
+    return this.proyectoService.remove(+id, profesorId);
   }
 }
