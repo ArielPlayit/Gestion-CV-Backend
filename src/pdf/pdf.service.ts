@@ -18,6 +18,11 @@ export class PdfService {
       return pdfData;
     });
 
+    doc.fontSize(12).text('Universidad de Ciencias Informaticas', { align: 'center' });
+    doc.fontSize(10).text('Dirección de la Institución', { align: 'center' });
+    doc.moveDown();
+    doc.moveDown();
+
     doc.fontSize(20).text('Curriculum Vitae', { align: 'center' });
     doc.moveDown();
     doc.fontSize(14).text(`Nombre: ${profesor.nombre}`);
