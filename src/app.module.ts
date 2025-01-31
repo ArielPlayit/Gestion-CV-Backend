@@ -17,9 +17,17 @@ import { Usuario } from './usuario/entities/usuario.entity';
 import { SolicitudModule } from './solicitud/solicitud.module';
 import { PdfModule } from './pdf/pdf.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DateFormatInterceptor } from './common/interceptors/date.interceptor';
 
 
 @Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DateFormatInterceptor,
+    },
+  ],
   imports: [
     ThrottlerModule.forRoot([{
       ttl: 60000,

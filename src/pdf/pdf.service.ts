@@ -4,121 +4,42 @@ import { ProfesorService } from 'src/profesor/profesor.service';
 
 @Injectable()
 export class PdfService {
+  private readonly HEADER_FONT_SIZE = 18;
+  private readonly TITLE_FONT_SIZE = 24;
+  private readonly SECTION_FONT_SIZE = 20;
+  private readonly TEXT_FONT_SIZE = 14;
+  private readonly SUB_TEXT_FONT_SIZE = 12;
+  private readonly PRIMARY_COLOR = '#2c3e50'; // Color oscuro para títulos
+  private readonly SECONDARY_COLOR = '#3498db'; // Color azul para detalles
+
   constructor(private readonly profesorService: ProfesorService) {}
 
   async generateCV(profesorId: number): Promise<Buffer> {
     const profesor = await this.profesorService.findOne(profesorId);
+    if (!profesor) {
+      throw new Error('Profesor no encontrado');
+    }
 
-    const doc = new PDFDocument();
-    const buffers = [];
+    const doc = new PDFDocument({ margin: 50 });
+    const buffers: Buffer[] = [];
 
     doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
-      const pdfData = Buffer.concat(buffers);
-      return pdfData;
-    });
 
-    doc.fontSize(12).text('Universidad de Ciencias Informaticas', { align: 'center' });
-    doc.fontSize(10).text('Dirección de la Institución', { align: 'center' });
-    doc.moveDown();
-    doc.moveDown();
+    this.addHeader(doc);
+    this.addPersonalInfo(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addLanguages(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addCourses(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addProjects(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addPublications(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addRecognitions(doc, profesor);
+    this.addSectionDivider(doc);
+    this.addTheses(doc, profesor);
 
-    doc.fontSize(20).text('Curriculum Vitae', { align: 'center' });
-    doc.moveDown();
-    doc.fontSize(14).text(`Nombre: ${profesor.nombre}`);
-    doc.fontSize(14).text(`Primer Apellido: ${profesor.primer_apellido}`)
-    doc.fontSize(14).text(`Segundo Apellido: ${profesor.segundo_apellido}`)
-    doc.text(`Email: ${profesor.email}`);
-    doc.text(`Teléfono: ${profesor.telefono}`);
-    doc.text(`Fecha de Nacimiento: ${profesor.fecha_nac}`);
-    doc.text(`Graduado de ${profesor.graduado_de} en ${profesor.graduado_lugar}, el ${profesor.graduado_fecha}`)
-    doc.text(`Grado Científico: ${profesor.grado_cientifico}. Obtenido el ${profesor.fecha_de_grado_cientifico}, en ${profesor.lugar_de_grado_cientifico}`);
-    doc.text(`Categoría Docente: ${profesor.categoria_docente}. Obtenido el ${profesor.fecha_de_categoria_docente}, en ${profesor.lugar_de_categoria_docente}`);
-    doc.text(`Categoría Científica: ${profesor.categoria_cientifica}. Obtenido el ${profesor.fecha_de_grado_cientifico}, en ${profesor.lugar_de_categoria_cientifica}`);
-    doc.text(`Posición Actual: ${profesor.posicion_actual} del departamento de ${profesor.departamento}`);
-    doc.moveDown();
-
-    // Agregar más secciones según sea necesario
-    doc.fontSize(16).text('Idiomas', { underline: true });
-    if (profesor.idioma && profesor.idioma.length > 0) {
-      profesor.idioma.forEach((idioma) => {
-        doc.fontSize(12).text(`Idioma: ${idioma.idioma}`);
-        doc.text(`Lee: ${idioma.lee}`);
-        doc.text(`Traduce: ${idioma.traduce}`);
-        doc.text(`Escribe: ${idioma.escribe}`);
-        doc.text(`Habla: ${idioma.habla}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay idiomas registrados.');
-    }
-
-    doc.fontSize(16).text('Cursos', { underline: true });
-    if (profesor.curso && profesor.curso.length > 0) {
-      profesor.curso.forEach((curso) => {
-        doc.fontSize(12).text(`Nombre del Curso: ${curso.nombre_del_curso}`);
-        doc.text(`Institución: ${curso.institucion}`);
-        doc.text(`Tipo: ${curso.tipo}`);
-        doc.text(`Fecha de Inicio: ${curso.fechainicio}`);
-        doc.text(`Fecha de Fin: ${curso.fechafin}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay cursos registrados.');
-    }
-
-    doc.fontSize(16).text('Proyecto', { underline: true });
-    if (profesor.proyecto && profesor.proyecto.length > 0) {
-      profesor.proyecto.forEach((proyecto) => {
-        doc.fontSize(12).text(`Nombre del Proyecto: ${proyecto.nombre}`);
-        doc.text(`Descripcion: ${proyecto.descripcion}`);
-        doc.text(`Rol: ${proyecto.rol}`);
-        doc.text(`Fecha de Inicio: ${proyecto.fechaInicio}`);
-        doc.text(`Fecha de Fin: ${proyecto.fechaFin}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay proyectos registrados.');
-    }
-
-    doc.fontSize(16).text('Publicacion', { underline: true });
-    if (profesor.publicacion && profesor.publicacion.length > 0) {
-      profesor.publicacion.forEach((publicacion) => {
-        doc.fontSize(12).text(`Nombre de la Publicacion: ${publicacion.titulo}`);
-        doc.text(`Tipo: ${publicacion.tipo}`);
-        doc.text(`Lugar: ${publicacion.lugar}`);
-        doc.text(`Fecha: ${publicacion.fecha}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay publicaciones registradas.');
-    }
-
-    doc.fontSize(16).text('Reconocimiento', { underline: true });
-    if (profesor.reconocimiento && profesor.reconocimiento.length > 0) {
-      profesor.reconocimiento.forEach((reconocimiento) => {
-        doc.fontSize(12).text(`Nombre del Reconocimiento: ${reconocimiento.nombre}`);
-        doc.text(`Lugar: ${reconocimiento.lugar}`);
-        doc.text(`Fecha: ${reconocimiento.fecha}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay reconocimientos registrados.');
-    }
-
-    doc.fontSize(16).text('Tesis', { underline: true });
-    if (profesor.tesis && profesor.tesis.length > 0) {
-      profesor.tesis.forEach((tesis) => {
-        doc.fontSize(12).text(`Titulo: ${tesis.titulo}`);
-        doc.text(`Nivel: ${tesis.nivel}`);
-        doc.text(`Fecha: ${tesis.anodefensa}`);
-        doc.moveDown();
-      });
-    } else {
-      doc.fontSize(12).text('No hay tesis registradas.');
-    }
-
-    // Finalizar el documento
     doc.end();
 
     return new Promise((resolve) => {
@@ -126,5 +47,210 @@ export class PdfService {
         resolve(Buffer.concat(buffers));
       });
     });
+  }
+
+  private addHeader(doc: PDFKit.PDFDocument): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.HEADER_FONT_SIZE)
+      .text('Universidad de Ciencias Informáticas', { align: 'center', underline: true })
+      .moveDown(0.5);
+
+    doc
+      .fillColor(this.SECONDARY_COLOR)
+      .fontSize(this.HEADER_FONT_SIZE - 2)
+      .text('Dirección de la Institución', { align: 'center' })
+      .moveDown(2);
+
+      doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.TITLE_FONT_SIZE)
+      .font('Helvetica')
+      .font('Helvetica-Bold') // Aplicar negrita
+      .text('Curriculum Vitae', { align: 'center' })
+      .font('Helvetica') // Restaurar la fuente normal
+      .moveDown(2);
+  }
+  private formatDate(date: Date | null): string {
+    return date ? date.toISOString().split('T')[0] : 'No especificado';
+  }
+
+  private addPersonalInfo(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Información Personal', { underline: true })
+      .moveDown(0.5);
+
+    doc
+      .fillColor(this.SECONDARY_COLOR)
+      .fontSize(this.TEXT_FONT_SIZE)
+      .text(`Nombre: ${profesor.nombre || 'No especificado'}`, { indent: 20 })
+      .text(`Primer Apellido: ${profesor.primer_apellido || 'No especificado'}`, { indent: 20 })
+      .text(`Segundo Apellido: ${profesor.segundo_apellido || 'No especificado'}`, { indent: 20 })
+      .text(`Email: ${profesor.email || 'No especificado'}`, { indent: 20 })
+      .text(`Teléfono: ${profesor.telefono || 'No especificado'}`, { indent: 20 })
+      .text(`Fecha de Nacimiento: ${ this.formatDate(profesor.fecha_nac) || 'No especificado'}`, { indent: 20 })
+      .moveDown();
+
+    if (profesor.graduado_de && profesor.graduado_lugar && profesor.graduado_fecha) {
+      doc.text(`Graduado de ${profesor.graduado_de} en ${profesor.graduado_lugar}, el ${this.formatDate(profesor.graduado_fecha)}`, { indent: 20 });
+    }
+    if (profesor.grado_cientifico && profesor.fecha_de_grado_cientifico && profesor.lugar_de_grado_cientifico) {
+      doc.text(`Grado Científico: ${profesor.grado_cientifico}. Obtenido el ${this.formatDate(profesor.fecha_de_grado_cientifico)}, en ${profesor.lugar_de_grado_cientifico}`, { indent: 20 });
+    }
+    if (profesor.categoria_docente && profesor.fecha_de_categoria_docente && profesor.lugar_de_categoria_docente) {
+      doc.text(`Categoría Docente: ${profesor.categoria_docente}. Obtenido el ${this.formatDate(profesor.fecha_de_categoria_docente)}, en ${profesor.lugar_de_categoria_docente}`, { indent: 20 });
+    }
+    if (profesor.categoria_cientifica && profesor.fecha_de_grado_cientifico && profesor.lugar_de_categoria_cientifica) {
+      doc.text(`Categoría Científica: ${profesor.categoria_cientifica}. Obtenido el ${this.formatDate(profesor.fecha_de_grado_cientifico)}, en ${profesor.lugar_de_categoria_cientifica}`, { indent: 20 });
+    }
+    if (profesor.posicion_actual && profesor.departamento) {
+      doc.text(`Posición Actual: ${profesor.posicion_actual} del departamento de ${profesor.departamento}`, { indent: 20 });
+    }
+    doc.moveDown();
+  }
+
+  private addLanguages(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Idiomas', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.idioma && profesor.idioma.length > 0) {
+      profesor.idioma.forEach((idioma: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Idioma: ${idioma.idioma}`, { indent: 20 })
+          .text(`Lee: ${idioma.lee ? 'si' : 'no'}`, { indent: 30 })
+          .text(`Traduce: ${idioma.traduce ? 'si' : 'no'}`, { indent: 30 })
+          .text(`Escribe: ${idioma.escribe ? 'si' : 'no'}`, { indent: 30 })
+          .text(`Habla: ${idioma.habla ? 'si' : 'no'}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay idiomas registrados.', { indent: 20 });
+    }
+  }
+
+  private addCourses(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Cursos', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.curso && profesor.curso.length > 0) {
+      profesor.curso.forEach((curso: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Nombre del Curso: ${curso.nombre_del_curso}`, { indent: 20 })
+          .text(`Institución: ${curso.institucion}`, { indent: 30 })
+          .text(`Tipo: ${curso.tipo}`, { indent: 30 })
+          .text(`Fecha de Inicio: ${this.formatDate(curso.fechainicio)}`, { indent: 30 })
+          .text(`Fecha de Fin: ${this.formatDate(curso.fechafin)}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay cursos registrados.', { indent: 20 });
+    }
+  }
+
+  private addProjects(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Proyectos', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.proyecto && profesor.proyecto.length > 0) {
+      profesor.proyecto.forEach((proyecto: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Nombre del Proyecto: ${proyecto.nombre}`, { indent: 20 })
+          .text(`Descripción: ${proyecto.descripcion}`, { indent: 30 })
+          .text(`Rol: ${proyecto.rol}`, { indent: 30 })
+          .text(`Fecha de Inicio: ${this.formatDate(proyecto.fechaInicio)}`, { indent: 30 })
+          .text(`Fecha de Fin: ${this.formatDate(proyecto.fechaFin)}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay proyectos registrados.', { indent: 20 });
+    }
+  }
+
+  private addPublications(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Publicaciones', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.publicacion && profesor.publicacion.length > 0) {
+      profesor.publicacion.forEach((publicacion: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Título: ${publicacion.titulo}`, { indent: 20 })
+          .text(`Tipo: ${publicacion.tipo}`, { indent: 30 })
+          .text(`Lugar: ${publicacion.lugar}`, { indent: 30 })
+          .text(`Fecha: ${this.formatDate(publicacion.fecha)}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay publicaciones registradas.', { indent: 20 });
+    }
+  }
+
+  private addRecognitions(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Reconocimientos', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.reconocimiento && profesor.reconocimiento.length > 0) {
+      profesor.reconocimiento.forEach((reconocimiento: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Nombre: ${reconocimiento.nombre}`, { indent: 20 })
+          .text(`Lugar: ${reconocimiento.lugar}`, { indent: 30 })
+          .text(`Fecha: ${this.formatDate(reconocimiento.fecha)}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay reconocimientos registrados.', { indent: 20 });
+    }
+  }
+
+  private addTheses(doc: PDFKit.PDFDocument, profesor: any): void {
+    doc
+      .fillColor(this.PRIMARY_COLOR)
+      .fontSize(this.SECTION_FONT_SIZE)
+      .text('Tesis', { underline: true })
+      .moveDown(0.5);
+
+    if (profesor.tesis && profesor.tesis.length > 0) {
+      profesor.tesis.forEach((tesis: any) => {
+        doc
+          .fillColor(this.SECONDARY_COLOR)
+          .fontSize(this.SUB_TEXT_FONT_SIZE)
+          .text(`Título: ${tesis.titulo}`, { indent: 20 })
+          .text(`Nivel: ${tesis.nivel}`, { indent: 30 })
+          .text(`Año de Defensa: ${this.formatDate(tesis.anodefensa)}`, { indent: 30 })
+          .moveDown();
+      });
+    } else {
+      doc.text('No hay tesis registradas.', { indent: 20 });
+    }
+  }
+
+  private addSectionDivider(doc: PDFKit.PDFDocument): void {
+    doc.moveDown(0.5).lineWidth(1).strokeColor('#cccccc').lineCap('butt').moveTo(50, doc.y).lineTo(550, doc.y).stroke().moveDown(1);
   }
 }

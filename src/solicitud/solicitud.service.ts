@@ -20,7 +20,10 @@ export class SolicitudJefeDepartamentoService {
   ) {}
 
   async create(profesorId: number, createSolicitudDto: CreateSolicitudDto) {
-    const profesor = await this.profesorRepository.findOne({ where: { id: profesorId }, relations: ['usuario'] });
+    const profesor = await this.profesorRepository.findOne({ 
+      where: { id: profesorId }, 
+      relations: ['departamento'] 
+    });
     if (!profesor) {
       throw new NotFoundException('Profesor no encontrado');
     }
